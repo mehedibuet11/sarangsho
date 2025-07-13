@@ -44,6 +44,9 @@ export default function SiteSettings() {
   const [logoPreview, setLogoPreview] = useState("");
   const [faviconPreview, setFaviconPreview] = useState("");
   const [heroImagePreview, setHeroImagePreview] = useState("");
+  const [uploadStatus, setUploadStatus] = useState<
+    "idle" | "uploading_logo"|"uploading_favicon"| "uploading_hero" | "uploaded" | "error"
+  >("idle");
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
@@ -82,47 +85,177 @@ export default function SiteSettings() {
       setLoading(false);
     }
   };
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        setLogoPreview(result);
-        setSettings((prev) => ({ ...prev, logo: result }));
+        setLogoPreview(result); // Local preview
       };
       reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      setUploadStatus("uploading_logo");
+
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          setUploadStatus("uploaded");
+          setSettings((prev) => ({ ...prev, logo: data.url }));
+          toast({
+            variant: "success",
+            title: "Logo Uploaded",
+            description: "Your logo has been successfully uploaded.",
+          });
+        } else {
+          setUploadStatus("error");
+          toast({
+            variant: "destructive",
+            title: "Upload Failed",
+            description:
+              data.error || "Server did not return a valid response.",
+          });
+          setLogoPreview("");
+        }
+      } catch (error) {
+        setUploadStatus("error");
+        console.error("Network error during logo upload:", error);
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Failed to upload logo. Please try again.",
+        });
+        setLogoPreview("");
+      }
     }
   };
 
-  const handleFaviconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFaviconUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        setFaviconPreview(result);
-        setSettings((prev) => ({ ...prev, favicon: result }));
+        setFaviconPreview(result); // Local preview
       };
       reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      setUploadStatus("uploading_favicon");
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          setUploadStatus("uploaded");
+          setSettings((prev) => ({ ...prev, favicon: data.url }));
+          toast({
+            variant: "success",
+            title: "Favicon Uploaded",
+            description: "Your favicon has been successfully uploaded.",
+          });
+        } else {
+          setUploadStatus("error");
+          toast({
+            variant: "destructive",
+            title: "Upload Failed",
+            description:
+              data.error || "Server did not return a valid response.",
+          });
+          setFaviconPreview("");
+        }
+      } catch (error) {
+        setUploadStatus("error");
+        console.error("Network error during favicon upload:", error);
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Failed to upload favicon. Please try again.",
+        });
+        setFaviconPreview("");
+      }
     }
   };
-
-  const handleHeroImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeroImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        setHeroImagePreview(result);
-        setSettings((prev) => ({ ...prev, heroImage: result }));
+        setHeroImagePreview(result); // Local preview
       };
       reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      setUploadStatus("uploading_hero");
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          setUploadStatus("uploaded");
+          setSettings((prev) => ({ ...prev, heroImage: data.url }));
+          toast({
+            variant: "success",
+            title: "Hero Image Uploaded",
+            description: "Your hero image has been successfully uploaded.",
+          });
+        } else {
+          setUploadStatus("error");
+          toast({
+            variant: "destructive",
+            title: "Upload Failed",
+            description:
+              data.error || "Server did not return a valid response.",
+          });
+          setHeroImagePreview("");
+        }
+      } catch (error) {
+        setUploadStatus("error");
+        console.error("Network error during hero image upload:", error);
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Failed to upload hero image. Please try again.",
+        });
+        setHeroImagePreview("");
+      }
     }
   };
 
   const handleSave = async () => {
+    if (uploadStatus === "uploading_logo" || uploadStatus === "uploading_favicon" || uploadStatus === "uploading_hero") {
+      toast({
+        variant: "destructive",
+        title: "Uploading in progress",
+        description: "Please wait until the upload is complete.",
+      });
+      return;
+    }
     setSaving(true);
     try {
       const response = await fetch("/api/admin/settings", {
@@ -354,7 +487,10 @@ export default function SiteSettings() {
                       <Button variant="outline" asChild>
                         <span>
                           <Upload className="w-4 h-4 mr-2" />
-                          Choose Logo
+
+                          {uploadStatus == "uploading_logo"
+                            ? "Uploading"
+                            : "Choose Logo"}
                         </span>
                       </Button>
                     </label>
@@ -404,7 +540,9 @@ export default function SiteSettings() {
                       <Button variant="outline" asChild>
                         <span>
                           <Upload className="w-4 h-4 mr-2" />
-                          Choose Favicon
+                          {uploadStatus == "uploading_favicon"
+                            ? "Uploading"
+                            : "Choose Favicon"}
                         </span>
                       </Button>
                     </label>
@@ -459,7 +597,10 @@ export default function SiteSettings() {
                       <Button variant="outline" asChild>
                         <span>
                           <Upload className="w-4 h-4 mr-2" />
-                          Choose Hero Image
+
+                          {uploadStatus == "uploading_hero"
+                            ? "Uploading"
+                            : "Choose Hero Image"}
                         </span>
                       </Button>
                     </label>

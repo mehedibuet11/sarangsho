@@ -1,21 +1,27 @@
-import { type NextRequest, NextResponse } from "next/server"
-import db, { initializeDatabase } from "@/lib/database"
+import { type NextRequest, NextResponse } from "next/server";
+import db, { initializeDatabase } from "@/lib/database";
+import type { RowDataPacket } from "mysql2";
 
-// Initialize database on first import
-initializeDatabase()
+await initializeDatabase();
+
+type AdminUser = RowDataPacket & {
+  username: string;
+  email: string;
+  last_login: string;
+};
 
 export async function GET() {
   try {
-    // For demo purposes, we'll return the admin user
-    // In a real app, you'd get the user ID from the JWT token
-    const user = db.prepare("SELECT username, email, last_login FROM admin_users WHERE username = ?").get("admin") as {
-      username: string
-      email: string
-      last_login: string
-    }
+    // Cast rows to AdminUser[]
+    const [rows] = await db.query<AdminUser[]>(
+      "SELECT username, email, last_login FROM admin_users WHERE username = ?",
+      ["admin"]
+    );
+
+    const user = rows[0];
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -24,35 +30,42 @@ export async function GET() {
         email: user.email,
         lastLogin: user.last_login,
       },
-    })
+    });
   } catch (error) {
-    console.error("Database error:", error)
-    return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 })
+    console.error("Database error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch profile" },
+      { status: 500 }
+    );
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { username, email } = body
+    const body = await request.json();
+    const { username, email } = body;
 
-    // Validate input
     if (!username || !email) {
-      return NextResponse.json({ error: "Username and email are required" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Username and email are required" },
+        { status: 400 }
+      );
     }
 
-    // Update user profile
-    const updateUser = db.prepare(`
-      UPDATE admin_users 
-      SET username = ?, email = ?
-      WHERE username = 'admin'
-    `)
+    const [result] = await db.execute(
+      `UPDATE admin_users SET username = ?, email = ? WHERE username = 'admin'`,
+      [username, email]
+    );
 
-    updateUser.run(username, email)
-
-    return NextResponse.json({ success: true, message: "Profile updated successfully" })
+    return NextResponse.json({
+      success: true,
+      message: "Profile updated successfully",
+    });
   } catch (error) {
-    console.error("Database error:", error)
-    return NextResponse.json({ error: "Failed to update profile" }, { status: 500 })
+    console.error("Database error:", error);
+    return NextResponse.json(
+      { error: "Failed to update profile" },
+      { status: 500 }
+    );
   }
 }

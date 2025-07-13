@@ -1,52 +1,61 @@
-import { notFound } from "next/navigation"
-import { Calendar, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import db, { initializeDatabase } from "@/lib/database"
+import { notFound } from "next/navigation";
+import { Calendar, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import db, { initializeDatabase } from "@/lib/database";
 
 // Initialize database
-initializeDatabase()
+initializeDatabase();
 
-// Get blog post from database
+// Get blog post from MySQL asynchronously
 const getBlogPost = async (slug: string) => {
   try {
-    const post = db
-      .prepare(`
+    const [rows] = await db.execute(
+      `
       SELECT * FROM blog_posts 
       WHERE slug = ? AND status = 'published'
-    `)
-      .get(slug)
-
-    return post
+      `,
+      [slug]
+    );
+    // rows is an array of posts, take the first
+    return (rows as any[])[0] || null;
   } catch (error) {
-    console.error("Database error:", error)
-    return null
+    console.error("Database error:", error);
+    return null;
   }
-}
+};
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await getBlogPost(params.slug)
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const post = await getBlogPost(params.slug);
 
   if (!post) {
     return {
       title: "Post Not Found",
-    }
+    };
   }
 
   return {
     title: post.seo_title || post.title,
     description: post.seo_description || post.excerpt,
     keywords: post.tags,
-  }
+  };
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const post = await getBlogPost(params.slug)
+export default async function BlogPost({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const post = await getBlogPost(params.slug);
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -64,7 +73,9 @@ export default async function BlogPost({ params }: { params: { slug: string } })
           </Link>
 
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-gray-900 leading-tight">{post.title}</h1>
+            <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+              {post.title}
+            </h1>
 
             <div className="flex items-center space-x-6 text-sm text-gray-600">
               <div className="flex items-center">
@@ -88,17 +99,20 @@ export default async function BlogPost({ params }: { params: { slug: string } })
           <img
             src={post.thumbnail || "/placeholder.svg"}
             alt={post.title}
-            className="w-full h-64 md:h-96 object-cover rounded-2xl"
+            className="w-full h-64 md:h-96 object-contain rounded-2xl"
           />
         </div>
       )}
 
       {/* Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: post.content }} />
+        <div
+          className="prose prose-lg max-w-none"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
       </article>
 
       <Footer />
     </div>
-  )
+  );
 }

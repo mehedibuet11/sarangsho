@@ -1,8 +1,0 @@
-{
-  "scripts": {
-    "seed": "node seed-sample-data.js"
-  },
-  "dependencies": {
-    "better-sqlite3": "^9.2.2"
-  }
-}

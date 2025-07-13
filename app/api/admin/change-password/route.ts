@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import db, { initializeDatabase } from "@/lib/database";
 import bcrypt from "bcryptjs";
+import type { RowDataPacket } from "mysql2";
 
-// Initialize database on first import
 initializeDatabase();
 
 export async function POST(request: NextRequest) {
@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { currentPassword, newPassword } = body;
 
-    // Validate input
     if (!currentPassword || !newPassword) {
       return NextResponse.json(
         { error: "Current password and new password are required" },
@@ -25,18 +24,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get current user (assuming "admin" user only)
-    const user = db
-      .prepare("SELECT password_hash FROM admin_users WHERE username = ?")
-      .get("admin") as {
-      password_hash: string;
-    };
+    // Cast the query result to RowDataPacket[]
+    const [rows] = await db.query<RowDataPacket[]>(
+      "SELECT password_hash FROM admin_users WHERE username = ?",
+      ["admin"]
+    );
 
-    if (!user) {
+    if (!rows || rows.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Compare current password using bcrypt
+    // Access the first row with the password_hash
+    const user = rows[0] as { password_hash: string };
+
     const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
     if (!isMatch) {
       return NextResponse.json(
@@ -45,13 +45,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash the new password securely
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
 
-    // Update password in DB
-    db.prepare(
-      `UPDATE admin_users SET password_hash = ? WHERE username = 'admin'`
-    ).run(newPasswordHash);
+    await db.query(
+      "UPDATE admin_users SET password_hash = ? WHERE username = ?",
+      [newPasswordHash, "admin"]
+    );
 
     return NextResponse.json({
       success: true,

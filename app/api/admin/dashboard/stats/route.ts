@@ -1,37 +1,61 @@
-import { NextResponse } from "next/server"
-import db, { initializeDatabase } from "@/lib/database"
+import { NextResponse } from "next/server";
+import db, { initializeDatabase } from "@/lib/database";
+import { RowDataPacket } from "mysql2";
 
 // Initialize database on first import
-initializeDatabase()
+await initializeDatabase();
+
+interface CountRow extends RowDataPacket {
+  count: number;
+}
 
 export async function GET() {
   try {
-    // Get blog posts stats
-    const totalPosts = db.prepare("SELECT COUNT(*) as count FROM blog_posts").get() as { count: number }
-    const publishedPosts = db.prepare("SELECT COUNT(*) as count FROM blog_posts WHERE status = 'published'").get() as {
-      count: number
-    }
-    const draftPosts = db.prepare("SELECT COUNT(*) as count FROM blog_posts WHERE status = 'draft'").get() as {
-      count: number
-    }
+    const [totalPostRows] = await db.query<CountRow[]>(
+      "SELECT COUNT(*) AS count FROM blog_posts"
+    );
+    const totalPosts = totalPostRows[0]?.count || 0;
 
-    // Get other stats
-    const totalScreenshots = db.prepare("SELECT COUNT(*) as count FROM screenshots").get() as { count: number }
-    const totalPages = db.prepare("SELECT COUNT(*) as count FROM custom_pages").get() as { count: number }
-    const totalFeatures = db.prepare("SELECT COUNT(*) as count FROM app_features").get() as { count: number }
+    const [publishedPostRows] = await db.query<CountRow[]>(
+      "SELECT COUNT(*) AS count FROM blog_posts WHERE status = 'published'"
+    );
+    const publishedPosts = publishedPostRows[0]?.count || 0;
+
+    const [draftPostRows] = await db.query<CountRow[]>(
+      "SELECT COUNT(*) AS count FROM blog_posts WHERE status = 'draft'"
+    );
+    const draftPosts = draftPostRows[0]?.count || 0;
+
+    const [screenshotRows] = await db.query<CountRow[]>(
+      "SELECT COUNT(*) AS count FROM screenshots"
+    );
+    const totalScreenshots = screenshotRows[0]?.count || 0;
+
+    const [pageRows] = await db.query<CountRow[]>(
+      "SELECT COUNT(*) AS count FROM custom_pages"
+    );
+    const totalPages = pageRows[0]?.count || 0;
+
+    const [featureRows] = await db.query<CountRow[]>(
+      "SELECT COUNT(*) AS count FROM app_features"
+    );
+    const totalFeatures = featureRows[0]?.count || 0;
 
     const stats = {
-      totalPosts: totalPosts.count,
-      publishedPosts: publishedPosts.count,
-      draftPosts: draftPosts.count,
-      totalScreenshots: totalScreenshots.count,
-      totalPages: totalPages.count,
-      totalFeatures: totalFeatures.count,
-    }
+      totalPosts,
+      publishedPosts,
+      draftPosts,
+      totalScreenshots,
+      totalPages,
+      totalFeatures,
+    };
 
-    return NextResponse.json(stats)
+    return NextResponse.json(stats);
   } catch (error) {
-    console.error("Database error:", error)
-    return NextResponse.json({ error: "Failed to fetch dashboard stats" }, { status: 500 })
+    console.error("Database error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch dashboard stats" },
+      { status: 500 }
+    );
   }
 }

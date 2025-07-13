@@ -1,39 +1,39 @@
-import Link from "next/link"
-import { Calendar, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import db, { initializeDatabase } from "@/lib/database"
+import Link from "next/link";
+import { Calendar, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import db, { initializeDatabase } from "@/lib/database";
 
 // Initialize database
-initializeDatabase()
+initializeDatabase();
 
-// Get all published blog posts
+// Async function to get all published blog posts from MySQL
 const getBlogPosts = async () => {
   try {
-    const posts = db
-      .prepare(`
+    const [rows] = await db.execute(
+      `
       SELECT id, title, slug, excerpt, thumbnail, published_at, author, tags
       FROM blog_posts 
       WHERE status = 'published' AND published_at IS NOT NULL
       ORDER BY published_at DESC
-    `)
-      .all()
-
-    return posts
+      `
+    );
+    return rows as any[];
   } catch (error) {
-    console.error("Database error:", error)
-    return []
+    console.error("Database error:", error);
+    return [];
   }
-}
+};
 
 export const metadata = {
   title: "Blog - Sarangsho",
-  description: "Read our latest insights on journalism, technology, and the future of news consumption.",
-}
+  description:
+    "Read our latest insights on journalism, technology, and the future of news consumption.",
+};
 
 export default async function BlogPage() {
-  const posts = await getBlogPosts()
+  const posts = await getBlogPosts();
 
   return (
     <div className="min-h-screen bg-white">
@@ -52,7 +52,8 @@ export default async function BlogPage() {
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Blog</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Stay updated with our thoughts on journalism, technology, and the future of news consumption.
+              Stay updated with our thoughts on journalism, technology, and the
+              future of news consumption.
             </p>
           </div>
         </div>
@@ -62,14 +63,16 @@ export default async function BlogPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {posts.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post: any) => (
+            {posts.map((post) => (
               <article
                 key={post.id}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
               >
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src={post.thumbnail || "/placeholder.svg?height=200&width=300"}
+                    src={
+                      post.thumbnail || "/placeholder.svg?height=200&width=300"
+                    }
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -86,11 +89,19 @@ export default async function BlogPage() {
                   <h2 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
                     {post.title}
                   </h2>
-                  <p className="text-gray-600 mb-4 leading-relaxed">{post.excerpt}</p>
+                  <p className="text-gray-600 mb-4 leading-relaxed">
+                    {post.excerpt}
+                  </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">By {post.author}</span>
+                    <span className="text-sm text-gray-500">
+                      By {post.author}
+                    </span>
                     <Link href={`/blog/${post.slug}`}>
-                      <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-blue-600 hover:text-blue-700"
+                      >
                         Read More →
                       </Button>
                     </Link>
@@ -104,8 +115,12 @@ export default async function BlogPage() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Calendar className="w-8 h-8 text-gray-400" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">No blog posts yet</h2>
-            <p className="text-gray-600 mb-8">Check back soon for our latest insights and articles.</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              No blog posts yet
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Check back soon for our latest insights and articles.
+            </p>
             <Link href="/">
               <Button>Return to Home</Button>
             </Link>
@@ -115,5 +130,5 @@ export default async function BlogPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

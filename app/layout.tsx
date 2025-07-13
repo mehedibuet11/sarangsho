@@ -4,14 +4,28 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { SettingsProvider } from "@/context/SettingsContext";
+import { headers } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const Settings = async function () {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/settings`,
-    { cache: "no-store" }
-  );
+  const host = headers().get("host");
+
+  const isLocalhost =
+    host?.startsWith("localhost") || host?.startsWith("127.0.0.1");
+
+  const protocol = isLocalhost
+    ? "http"
+    : process.env.NODE_ENV === "development"
+    ? "http"
+    : "https";
+
+  const baseUrl = `${protocol}://${host}`;
+
+  const res = await fetch(`${baseUrl}/api/admin/settings`, {
+    cache: "no-store",
+  });
+
   const data = await res.json();
   return data.settings || {};
 };

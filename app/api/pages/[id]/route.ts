@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import db from "@/lib/database";
+import db from "@/lib/database"; // mysql2 pool
 
 export async function GET(
   request: NextRequest,
@@ -7,7 +7,11 @@ export async function GET(
 ) {
   try {
     const id = Number.parseInt(params.id);
-    const post = db.prepare("SELECT * FROM custom_pages WHERE id = ?").get(id);
+
+    const [rows] = await db.execute("SELECT * FROM custom_pages WHERE id = ?", [
+      id,
+    ]);
+    const post = (rows as any[])[0];
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
@@ -22,6 +26,7 @@ export async function GET(
     );
   }
 }
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -29,8 +34,9 @@ export async function DELETE(
   try {
     const id = Number.parseInt(params.id);
 
-    const deletePage = db.prepare("DELETE FROM custom_pages WHERE id = ?");
-    deletePage.run(id);
+    const [result] = await db.execute("DELETE FROM custom_pages WHERE id = ?", [
+      id,
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -51,17 +57,17 @@ export async function PUT(
     const { title, slug, content, status, seoTitle, seoDescription } = body;
     const id = Number.parseInt(params.id);
 
-    const updatePage = db.prepare(`
-      UPDATE custom_pages 
+    await db.execute(
+      `UPDATE custom_pages 
       SET title = ?, slug = ?, content = ?, status = ?, seo_title = ?, seo_description = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `);
+      WHERE id = ?`,
+      [title, slug, content, status, seoTitle, seoDescription, id]
+    );
 
-    updatePage.run(title, slug, content, status, seoTitle, seoDescription, id);
-
-    const updatedPage = db
-      .prepare("SELECT * FROM custom_pages WHERE id = ?")
-      .get(id);
+    const [rows] = await db.execute("SELECT * FROM custom_pages WHERE id = ?", [
+      id,
+    ]);
+    const updatedPage = (rows as any[])[0];
 
     return NextResponse.json({ success: true, page: updatedPage });
   } catch (error) {

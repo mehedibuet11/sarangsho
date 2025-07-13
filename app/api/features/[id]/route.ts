@@ -1,52 +1,84 @@
-import { type NextRequest, NextResponse } from "next/server"
-import db from "@/lib/database"
+import { type NextRequest, NextResponse } from "next/server";
+import mysql from "mysql2/promise";
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+// Create a mysql2 connection pool (configure with your DB credentials)
+const pool = mysql.createPool({
+  host: "localhost",
+  user: "your_user",
+  password: "your_password",
+  database: "your_database",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const body = await request.json()
-    const id = Number.parseInt(params.id)
+    const body = await request.json();
+    const id = Number.parseInt(params.id);
 
-    // If only updating is_active status
-    if (Object.keys(body).length === 1 && "is_active" in body) {
-      const updateFeatureStatus = db.prepare(`
-        UPDATE app_features 
-        SET is_active = ?
-        WHERE id = ?
-      `)
-
-      updateFeatureStatus.run(body.is_active ? 1 : 0, id)
-    } else {
-      // Full update
-      const { title, description, icon, gradient, is_active } = body
-
-      const updateFeature = db.prepare(`
-        UPDATE app_features 
-        SET title = ?, description = ?, icon = ?, gradient = ?, is_active = ?
-        WHERE id = ?
-      `)
-
-      updateFeature.run(title, description, icon, gradient, is_active ? 1 : 0, id)
+    if (isNaN(id)) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    const updatedFeature = db.prepare("SELECT * FROM app_features WHERE id = ?").get(id)
+    if (Object.keys(body).length === 1 && "is_active" in body) {
+      const [result] = await pool.execute(
+        "UPDATE app_features SET is_active = ? WHERE id = ?",
+        [body.is_active ? 1 : 0, id]
+      );
+    } else {
+      const { title, description, icon, gradient, is_active } = body;
 
-    return NextResponse.json({ success: true, feature: updatedFeature })
+      const [result] = await pool.execute(
+        `UPDATE app_features 
+         SET title = ?, description = ?, icon = ?, gradient = ?, is_active = ?
+         WHERE id = ?`,
+        [title, description, icon, gradient, is_active ? 1 : 0, id]
+      );
+    }
+
+    const [rows] = await pool.execute(
+      "SELECT * FROM app_features WHERE id = ?",
+      [id]
+    );
+    const updatedFeature = (rows as any[])[0];
+
+    if (!updatedFeature) {
+      return NextResponse.json({ error: "Feature not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, feature: updatedFeature });
   } catch (error) {
-    console.error("Database error:", error)
-    return NextResponse.json({ error: "Failed to update feature" }, { status: 500 })
+    console.error("Database error:", error);
+    return NextResponse.json(
+      { error: "Failed to update feature" },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const id = Number.parseInt(params.id)
+    const id = Number.parseInt(params.id);
 
-    const deleteFeature = db.prepare("DELETE FROM app_features WHERE id = ?")
-    deleteFeature.run(id)
+    if (isNaN(id)) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+    }
 
-    return NextResponse.json({ success: true })
+    await pool.execute("DELETE FROM app_features WHERE id = ?", [id]);
+
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Database error:", error)
-    return NextResponse.json({ error: "Failed to delete feature" }, { status: 500 })
+    console.error("Database error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete feature" },
+      { status: 500 }
+    );
   }
 }

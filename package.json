@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start -p 30003"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -40,15 +40,16 @@
     "@tinymce/tinymce-react": "latest",
     "autoprefixer": "^10.4.20",
     "bcryptjs": "^3.0.2",
-    "better-sqlite3": "latest",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "date-fns": "4.1.0",
+    "date-fns": "^3.3.1",
     "embla-carousel-react": "8.5.1",
     "fs": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
+    "mysql2": "^3.14.2",
     "next": "^14.2.30",
     "next-themes": "^0.4.4",
     "path": "latest",
