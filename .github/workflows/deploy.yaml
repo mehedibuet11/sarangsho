@@ -17,11 +17,11 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "22.14.0"
-      # - name: 🔨 Create .env file
-      #   env:
-      #     PROD_ENV: ${{ secrets.CLIENT_ENV }}
-      #   run: |
-      #     echo "$PROD_ENV" > .env.local
+      - name: 🔨 Create .env file
+        env:
+          PROD_ENV: ${{ secrets.CLIENT_ENV }}
+        run: |
+          echo "$PROD_ENV" > .env.local
       # Step 3: Install dependencies for both frontend and backend
       - name: Install dependencies
         run: |
