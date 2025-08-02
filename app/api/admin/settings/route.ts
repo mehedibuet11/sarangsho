@@ -39,6 +39,7 @@ export async function GET() {
       download: "",
       rating: "",
       newsSource: "",
+      heroLink: "",
     };
 
     const keyMapping: Record<string, keyof typeof settings> = {
@@ -66,6 +67,7 @@ export async function GET() {
       download: "download",
       rating: "rating",
       news_source: "newsSource",
+      hero_link: "heroLink",
     };
 
     settingsRows.forEach((row) => {
@@ -116,6 +118,7 @@ export async function POST(request: NextRequest) {
       ["download", body.download ?? ""],
       ["rating", body.rating ?? ""],
       ["news_source", body.newsSource ?? ""],
+      ["hero_link", body.heroLink ?? ""],
       [
         "copyright",
         body.copyright ?? `© ${new Date().getFullYear()} Sarangsho`,

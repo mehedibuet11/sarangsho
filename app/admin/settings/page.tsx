@@ -43,6 +43,7 @@ export default function SiteSettings() {
     download: "",
     rating: "",
     newsSource: "",
+    heroLink: "",
   });
   const [logoPreview, setLogoPreview] = useState("");
   const [faviconPreview, setFaviconPreview] = useState("");
@@ -400,6 +401,22 @@ export default function SiteSettings() {
                         setSettings((prev) => ({
                           ...prev,
                           footerDescription: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Hero Video ID(Optional)
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="downloaded count"
+                      value={settings.heroLink}
+                      onChange={(e) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          heroLink: e.target.value,
                         }))
                       }
                     />
