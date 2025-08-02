@@ -411,7 +411,7 @@ export default function SiteSettings() {
                     </label>
                     <Input
                       type="text"
-                      placeholder="youtube video id"
+                      placeholder="downloaded count"
                       value={settings.heroLink}
                       onChange={(e) =>
                         setSettings((prev) => ({
