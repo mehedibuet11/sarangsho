@@ -7,11 +7,17 @@ import { useSettings } from "@/context/SettingsContext";
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+
+  const settings = useSettings();
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
-  const settings = useSettings();
+
+  const openModal = () => setShowVideoModal(true);
+  const closeModal = () => setShowVideoModal(false);
+
   return (
     <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,7 +49,7 @@ export function HeroSection() {
             {/* Download Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <a
-                href="{settings.appStoreLink || '#'}"
+                href={settings.appStoreLink || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -62,7 +68,7 @@ export function HeroSection() {
               </a>
 
               <a
-                href="{settings.playStoreLink || '#'}"
+                href={settings.playStoreLink || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -90,15 +96,22 @@ export function HeroSection() {
             {/* Stats */}
             <div className="flex items-center space-x-8 pt-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">10K+</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {settings.download || "10k+"}
+                </div>
                 <div className="text-sm text-gray-500">Downloads</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">4.8</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {settings.rating || "4.8"}
+                </div>
                 <div className="text-sm text-gray-500">Rating</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">50+</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {" "}
+                  {settings.newsSource || "50"}
+                </div>
                 <div className="text-sm text-gray-500">News Sources</div>
               </div>
             </div>
@@ -113,47 +126,40 @@ export function HeroSection() {
             }`}
           >
             <div className="relative mx-auto w-80 h-[600px]">
-              {/* Phone Frame */}
               <div className="absolute inset-0 bg-gray-900 rounded-[3rem] p-2">
                 <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
                   {/* Notch */}
                   <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-2xl z-10"></div>
 
                   {/* Screen Content */}
-                  {settings.heroImage ? (
+                  {settings.heroLink ? (
+                    <div className="relative w-full h-full">
+                      {/* Background Image */}
+                      {settings.heroImage && (
+                        <img
+                          src={settings.heroImage}
+                          alt="Hero Thumbnail"
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      )}
+
+                      {/* Play Button Overlay */}
+                      <button
+                        onClick={openModal}
+                        className="relative z-10 w-full h-full flex items-center justify-center"
+                      >
+                        <Play className="w-14 h-14 text-white bg-black bg-opacity-70 rounded-full p-3 shadow-lg hover:scale-105 transition" />
+                      </button>
+                    </div>
+                  ) : settings.heroImage ? (
                     <img
                       src={settings.heroImage}
                       alt="Hero Image"
-                      className="w-full h-auto object-cover"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="pt-8 h-full bg-gradient-to-b from-blue-100 to-purple-100">
-                      <div className="px-4 space-y-4">
-                        {/* Header */}
-                        <div className="flex items-center justify-between">
-                          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"></div>
-                          <div className="text-lg font-bold">Sarangsho</div>
-                          <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
-                        </div>
-
-                        {/* News Cards */}
-                        <div className="space-y-3">
-                          <div className="bg-white rounded-2xl p-4 shadow-sm">
-                            <div className="w-full h-32 bg-gradient-to-r from-blue-200 to-blue-300 rounded-xl mb-3"></div>
-                            <div className="space-y-2">
-                              <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                            </div>
-                          </div>
-                          <div className="bg-white rounded-2xl p-4 shadow-sm">
-                            <div className="w-full h-32 bg-gradient-to-r from-purple-200 to-purple-300 rounded-xl mb-3"></div>
-                            <div className="space-y-2">
-                              <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                              <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+                      No media available
                     </div>
                   )}
                 </div>
@@ -166,6 +172,29 @@ export function HeroSection() {
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {showVideoModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="relative w-[90%] max-w-2xl bg-black rounded-xl overflow-hidden shadow-lg">
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-white text-xl z-10"
+            >
+              ×
+            </button>
+            <iframe
+              width="100%"
+              height="400"
+              src={`https://www.youtube.com/embed/${settings.heroLink}?autoplay=1`}
+              title="Hero Video"
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

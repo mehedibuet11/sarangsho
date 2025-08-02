@@ -11,6 +11,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
+import Image from "next/image";
 
 export function Footer() {
   const settings = useSettings();
@@ -23,10 +24,12 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               {settings.logo ? (
-                <img
-                  src={settings.logo || "/logo.svg"}
+                <Image
+                  src={settings.logo}
                   alt="Sarangsho Logo"
-                  className="w-20 h-20 rounded-lg"
+                  width={192} // Corresponds to w-48
+                  height={80} // Corresponds to h-20
+                  className="rounded-lg object-contain" // Added object-contain for better scaling
                 />
               ) : (
                 <>

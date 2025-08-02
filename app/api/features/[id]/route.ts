@@ -1,16 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
-
-// Create a mysql2 connection pool (configure with your DB credentials)
-const pool = mysql.createPool({
-  host: "localhost",
-  user: "your_user",
-  password: "your_password",
-  database: "your_database",
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+import db from "@/lib/database"; // mysql2 promise pool
 
 export async function PUT(
   request: NextRequest,
@@ -25,14 +15,14 @@ export async function PUT(
     }
 
     if (Object.keys(body).length === 1 && "is_active" in body) {
-      const [result] = await pool.execute(
+      const [result] = await db.execute(
         "UPDATE app_features SET is_active = ? WHERE id = ?",
         [body.is_active ? 1 : 0, id]
       );
     } else {
       const { title, description, icon, gradient, is_active } = body;
 
-      const [result] = await pool.execute(
+      const [result] = await db.execute(
         `UPDATE app_features 
          SET title = ?, description = ?, icon = ?, gradient = ?, is_active = ?
          WHERE id = ?`,
@@ -40,10 +30,9 @@ export async function PUT(
       );
     }
 
-    const [rows] = await pool.execute(
-      "SELECT * FROM app_features WHERE id = ?",
-      [id]
-    );
+    const [rows] = await db.execute("SELECT * FROM app_features WHERE id = ?", [
+      id,
+    ]);
     const updatedFeature = (rows as any[])[0];
 
     if (!updatedFeature) {
@@ -71,7 +60,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
-    await pool.execute("DELETE FROM app_features WHERE id = ?", [id]);
+    await db.execute("DELETE FROM app_features WHERE id = ?", [id]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -411,17 +411,17 @@ export default function SiteSettings() {
                     </label>
                     <Input
                       type="text"
-                      placeholder="downloaded count"
+                      placeholder="youtube video id"
                       value={settings.heroLink}
                       onChange={(e) =>
                         setSettings((prev) => ({
                           ...prev,
-                          heroLink: e.target.value, 
+                          heroLink: e.target.value,
                         }))
                       }
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Downloaded(count)
@@ -444,7 +444,7 @@ export default function SiteSettings() {
                     </label>
                     <Input
                       type="text"
-                      placeholder="downloaded count"
+                      placeholder="rating count"
                       value={settings.rating}
                       onChange={(e) =>
                         setSettings((prev) => ({
@@ -460,7 +460,7 @@ export default function SiteSettings() {
                     </label>
                     <Input
                       type="text"
-                      placeholder="downloaded count"
+                      placeholder="news source count"
                       value={settings.newsSource}
                       onChange={(e) =>
                         setSettings((prev) => ({
