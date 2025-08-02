@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Smartphone, Search, Shield, Zap, Globe, Star } from "lucide-react"
+import { useEffect, useState } from "react";
+import { Smartphone, Search, Shield, Zap, Globe, Star } from "lucide-react";
 
 interface Feature {
-  id: number
-  title: string
-  description: string
-  icon: string
-  gradient: string
-  sort_order: number
-  is_active: boolean
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+  gradient: string;
+  sort_order: number;
+  is_active: boolean;
 }
 
 const iconMap = {
@@ -20,27 +20,27 @@ const iconMap = {
   Zap,
   Globe,
   Star,
-}
+};
 
 export function FeaturesSection() {
-  const [features, setFeatures] = useState<Feature[]>([])
-  const [loading, setLoading] = useState(true)
+  const [features, setFeatures] = useState<Feature[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchFeatures()
-  }, [])
+    fetchFeatures();
+  }, []);
 
   const fetchFeatures = async () => {
     try {
-      const response = await fetch("/api/features")
-      const data = await response.json()
-      setFeatures(data.features || [])
+      const response = await fetch("/api/features");
+      const data = await response.json();
+      setFeatures(data.features || []);
     } catch (error) {
-      console.error("Failed to fetch features:", error)
+      console.error("Failed to fetch features:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -64,16 +64,19 @@ export function FeaturesSection() {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   return (
     <section id="features" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose Sarangsho?</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Why Choose Sarangsho?
+          </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experience news consumption like never before with our innovative features designed for the modern reader.
+            Experience news consumption like never before with our innovative
+            features designed for the modern reader.
           </p>
         </div>
 
@@ -81,7 +84,8 @@ export function FeaturesSection() {
           {features
             .filter((f) => f.is_active)
             .map((feature) => {
-              const IconComponent = iconMap[feature.icon as keyof typeof iconMap] || Smartphone
+              const IconComponent =
+                iconMap[feature.icon as keyof typeof iconMap] || Smartphone;
 
               return (
                 <div
@@ -93,13 +97,17 @@ export function FeaturesSection() {
                   >
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-              )
+              );
             })}
         </div>
       </div>
     </section>
-  )
+  );
 }

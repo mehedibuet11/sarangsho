@@ -411,17 +411,17 @@ export default function SiteSettings() {
                     </label>
                     <Input
                       type="text"
-                      placeholder="downloaded count"
+                      placeholder="Video Id"
                       value={settings.heroLink}
                       onChange={(e) =>
                         setSettings((prev) => ({
                           ...prev,
-                          heroLink: e.target.value, 
+                          heroLink: e.target.value,
                         }))
                       }
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Downloaded(count)
