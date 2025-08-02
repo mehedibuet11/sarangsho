@@ -416,7 +416,7 @@ export default function SiteSettings() {
                       onChange={(e) =>
                         setSettings((prev) => ({
                           ...prev,
-                          heroLink: e.target.value,
+                          heroLink: e.target.value, 
                         }))
                       }
                     />
