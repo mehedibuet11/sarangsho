@@ -36,6 +36,9 @@ export async function GET() {
       footerDescription: "",
       copyright: "",
       tagLine: "",
+      download: "",
+      rating: "",
+      newsSource: "",
     };
 
     const keyMapping: Record<string, keyof typeof settings> = {
@@ -60,6 +63,9 @@ export async function GET() {
       footer_description: "footerDescription",
       copyright: "copyright",
       tag_line: "tagLine",
+      download: "download",
+      rating: "rating",
+      news_source: "newsSource",
     };
 
     settingsRows.forEach((row) => {
@@ -107,6 +113,9 @@ export async function POST(request: NextRequest) {
       ["google_analytics", body.googleAnalytics ?? ""],
       ["meta_keywords", body.metaKeywords ?? ""],
       ["footer_description", body.footerDescription ?? ""],
+      ["download", body.download ?? ""],
+      ["rating", body.rating ?? ""],
+      ["news_source", body.newsSource ?? ""],
       [
         "copyright",
         body.copyright ?? `© ${new Date().getFullYear()} Sarangsho`,

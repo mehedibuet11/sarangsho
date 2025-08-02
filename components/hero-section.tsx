@@ -26,7 +26,7 @@ export function HeroSection() {
           >
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#c25137] to-[#f77c6c] bg-clip-text text-transparent">
                   {settings.siteName || "Sarangsho"}
                 </span>
               </h1>
