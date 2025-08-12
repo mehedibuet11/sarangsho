@@ -25,9 +25,9 @@ jobs:
       # Step 3: Install dependencies for both frontend and backend
       - name: Install dependencies
         run: |
-          npm i  -g pnpm 
-          pnpm i 
-          pnpm build
+          npm i  -g npm 
+          npm i 
+          npm build
 
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.4
