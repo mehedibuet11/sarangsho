@@ -96,7 +96,7 @@ export default async function RootLayout({
   const settings = await Settings();
 
   return (
-    <html lang="en ">
+    <html lang="en">
       <body className={inter.className}>
         <SettingsProvider settings={settings}>{children}</SettingsProvider>
         <Toaster />
