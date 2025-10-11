@@ -27,7 +27,7 @@ jobs:
         run: |
           npm i  -g npm 
           npm i 
-          npm run build
+          # npm run build
 
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.4
@@ -38,4 +38,20 @@ jobs:
           port: 22
           overwrite: true
           source: .next,public,.gitignore,components.json,eslint.config.mjs,next.config.ts,package.json,pnpm-lock.yaml,pm2.config.js,.env,postcss.config.mjs,tailwind.config.ts,tsconfig.json,README.md, prisma/**
-          target: "/home/mehedi/public_html"
+          target: "/home/servicesbd/htdocs/servicesbd.top"
+
+      - name: Build & reload on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd /home/servicesbd/htdocs/servicesbd.top
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+            export PATH="$PATH:$HOME/.nvm/versions/node/v22.14.0/bin"
+            pnpm i --frozen-lockfile
+            pnpm build
+            pm2 start pm2.config.js || pm2 reload pm2.config.js
