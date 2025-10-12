@@ -38,7 +38,7 @@ jobs:
           port: 22
           overwrite: true
           source: .next,public,.gitignore,components.json,eslint.config.mjs,next.config.ts,package.json,pnpm-lock.yaml,pm2.config.js,.env,.env.local,postcss.config.mjs,tailwind.config.ts,tsconfig.json,README.md, prisma/**
-          target: "/home/servicesbd/htdocs/servicesbd.top"
+          target: "/home/sarangsho/htdocs/sarangsho.com"
 
       - name: Build & reload on server
         uses: appleboy/ssh-action@v1.0.3
@@ -47,7 +47,7 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd /home/servicesbd/htdocs/servicesbd.top
+            cd /home/sarangsho/htdocs/sarangsho.com
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
