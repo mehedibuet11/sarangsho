@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           overwrite: true
-          source: .env.local,.next,public,.gitignore,components.json,eslint.config.mjs,next.config.ts,package.json,pnpm-lock.yaml,pm2.config.js,.env,postcss.config.mjs,tailwind.config.ts,tsconfig.json,README.md, prisma/**
+          source: .env.local,app,.next,public,.gitignore,components.json,eslint.config.mjs,next.config.ts,package.json,pnpm-lock.yaml,pm2.config.js,.env,postcss.config.mjs,tailwind.config.ts,tsconfig.json,README.md, prisma/**
           target: "/home/servicesbd/htdocs/servicesbd.top"
 
       - name: Build & reload on server
@@ -53,5 +53,5 @@ jobs:
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
             export PATH="$PATH:$HOME/.nvm/versions/node/v22.14.0/bin"
             pnpm i --frozen-lockfile
-
+            pnpm build
             pm2 start pm2.config.js || pm2 reload pm2.config.js
