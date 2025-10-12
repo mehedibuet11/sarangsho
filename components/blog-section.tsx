@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
+// src/components/blog-section.tsx
 import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,29 +12,25 @@ interface BlogPost {
   slug: string;
 }
 
-export function BlogSection() {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+// ✅ Fetch posts on the server with caching for 30 seconds
+async function getBlogPosts(): Promise<BlogPost[]> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/published`, {
+      next: { revalidate: 30 }, // revalidate every 30s (ISR)
+    });
 
-  const fetchBlogPosts = async () => {
-    try {
-      const response = await fetch("/api/blog/published", {
-        cache: "no-store",
-      });
-      const data = await response.json();
-      setBlogPosts(data.posts || []);
-    } catch (error) {
-      console.error("Failed to fetch blog posts:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!res.ok) throw new Error("Failed to fetch blog posts");
 
-  useEffect(() => {
-    fetchBlogPosts();
-  }, []);
+    const data = await res.json();
+    return data.posts || [];
+  } catch (err) {
+    console.error("Blog fetch error:", err);
+    return [];
+  }
+}
 
-  const categoryColors = ["bg-blue-500", "bg-green-500", "bg-purple-500"];
+export async function BlogSection() {
+  const blogPosts = await getBlogPosts();
 
   return (
     <section id="blog" className="blog-section py-20 bg-white">
@@ -51,24 +45,10 @@ export function BlogSection() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="bg-gray-100 rounded-lg shadow p-6 animate-pulse"
-              >
-                <div className="h-48 bg-gray-300 rounded mb-4"></div>
-                <div className="h-4 bg-gray-300 rounded w-1/4 mb-2"></div>
-                <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-              </div>
-            ))}
-          </div>
-        ) : blogPosts.length > 0 ? (
+        {blogPosts.length > 0 ? (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {blogPosts.slice(0, 3).map((post, index) => (
+              {blogPosts.slice(0, 3).map((post) => (
                 <article
                   key={post.id}
                   className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300"
@@ -80,17 +60,12 @@ export function BlogSection() {
                   />
                   <div className="p-6">
                     <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {new Date(post.published_at).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                      </div>
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {new Date(post.published_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
                     </div>
 
                     <h3 className="text-xl font-bold text-gray-800 mb-2 leading-snug">
@@ -99,14 +74,7 @@ export function BlogSection() {
                     <p className="text-gray-600 mb-4 leading-relaxed">
                       {post.excerpt}
                     </p>
-                    {/* <div className="flex items-center text-sm text-gray-500 mb-4">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {new Date(post.published_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </div> */}
+
                     <Link href={`/blog/${post.slug}`}>
                       <span className="inline-flex items-center group text-blue-600 hover:text-blue-700 font-semibold transition-colors">
                         Read More
