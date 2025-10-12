@@ -1,11 +1,9 @@
-import { Navbar } from "@/components/navbar"
-import { HeroSection } from "@/components/hero-section"
-import { FeaturesSection } from "@/components/features-section"
-import { BlogSection } from "@/components/blog-section"
-import { Footer } from "@/components/footer"
+import { Navbar } from "@/components/navbar";
+import { HeroSection } from "@/components/hero-section";
+import { FeaturesSection } from "@/components/features-section";
+import { BlogSection } from "@/components/blog-section";
+import { Footer } from "@/components/footer";
 import Screenshots from "@/components/Screenshots";
-
-
 
 export default function HomePage() {
   return (
@@ -13,10 +11,10 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <FeaturesSection />
-      <Screenshots/>
+      <Screenshots />
       {/* <ScreenshotsGallery /> */}
       <BlogSection />
       <Footer />
     </div>
-  )
+  );
 }
