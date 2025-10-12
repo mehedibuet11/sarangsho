@@ -31,7 +31,7 @@ export default function ComingSoonPage() {
   });
 
   // Set your launch date here
-  const launchDate = new Date("2025-10-14T00:00:00");
+  const launchDate = new Date("2025-10-18T00:00:00");
 
   useEffect(() => {
     const timer = setInterval(() => {
