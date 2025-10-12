@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           overwrite: true
-          source: .env.local,app,.next,public,.gitignore,components.json,eslint.config.mjs,next.config.ts,package.json,pnpm-lock.yaml,pm2.config.js,.env,postcss.config.mjs,tailwind.config.ts,tsconfig.json,README.md, prisma/**
+          source: .env.local,app,.next,public,.gitignore,components,context,hooks,lib,styles,components.json,eslint.config.mjs,next.config.ts,package.json,pnpm-lock.yaml,pm2.config.js,.env,postcss.config.mjs,tailwind.config.ts,tsconfig.json,README.md, prisma/**
           target: "/home/servicesbd/htdocs/servicesbd.top"
 
       - name: Build & reload on server
