@@ -20,7 +20,9 @@ export function BlogSection() {
 
   const fetchBlogPosts = async () => {
     try {
-      const response = await fetch("/api/blog/published");
+      const response = await fetch("/api/blog/published", {
+        cache: "no-store",
+      });
       const data = await response.json();
       setBlogPosts(data.posts || []);
     } catch (error) {
