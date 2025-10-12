@@ -18,10 +18,6 @@ export function BlogSection() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchBlogPosts();
-  }, []);
-
   const fetchBlogPosts = async () => {
     try {
       const response = await fetch("/api/blog/published");
@@ -33,6 +29,10 @@ export function BlogSection() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBlogPosts();
+  }, []);
 
   const categoryColors = ["bg-blue-500", "bg-green-500", "bg-purple-500"];
 
