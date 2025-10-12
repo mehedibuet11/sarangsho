@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-
+import Cookies from "js-cookie"; 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
@@ -43,6 +43,11 @@ export default function AdminLogin() {
 
       if (data.success) {
         localStorage.setItem("admin_token", data.token);
+          Cookies.set("admin_token", data.token, {
+      expires: 7, // 7 days
+      secure: false, // only over HTTPS
+      sameSite: "strict", // protect from CSRF
+    });
         router.push("/admin/dashboard");
       } else {
         toast({

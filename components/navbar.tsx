@@ -8,7 +8,7 @@ import { useSettings } from "@/context/SettingsContext";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const settings = useSettings();
+  const settings:any = useSettings();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
@@ -16,9 +16,9 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            {settings.logo ? (
+            {settings?.logo ? (
               <img
-                src={settings.logo || "/logo.svg"}
+                src={settings?.logo || "/logo.svg"}
                 alt="Sarangsho Logo"
                 className="w-auto h-12 rounded-lg"
               />
