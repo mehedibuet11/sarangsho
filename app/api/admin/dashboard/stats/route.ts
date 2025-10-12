@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import db, { initializeDatabase } from "@/lib/database";
+import db from "@/lib/database";
 import { RowDataPacket } from "mysql2";
-
-// Initialize database on first import
-await initializeDatabase();
 
 interface CountRow extends RowDataPacket {
   count: number;
