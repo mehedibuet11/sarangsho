@@ -15,8 +15,8 @@ export async function middleware(req: NextRequest) {
 
   if (token) {
     try {
-      const data: any = await jwtVerify(token, SECRET_KEY);
-      if (data?.email) {
+      const { payload } = await jwtVerify(token, SECRET_KEY); // destructure payload
+      if (payload?.email) {
         isTokenValid = true;
       }
     } catch (err) {
@@ -24,13 +24,13 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // 1️⃣ If user is on login page but already logged in, redirect to dashboard
+  // Redirect logged-in users away from login page
   if (isLoginPage && isTokenValid) {
     url.pathname = "/admin/dashboard";
     return NextResponse.redirect(url);
   }
 
-  // 2️⃣ If user is trying to access /admin/** (except login) without valid token
+  // Protect all /admin nested routes
   if (!isLoginPage && url.pathname.startsWith("/admin") && !isTokenValid) {
     url.pathname = LOGIN_PATH;
     return NextResponse.redirect(url);
@@ -40,5 +40,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"], // matches all /admin/** routes
+  matcher: ["/admin/:path*"], // all /admin/** routes
 };
