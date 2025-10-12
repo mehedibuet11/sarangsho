@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { baseUrl } from "@/app/constant";
 
 interface BlogPost {
   id: number;
@@ -12,19 +13,18 @@ interface BlogPost {
   slug: string;
 }
 
-// ✅ Fetch posts on the server with caching for 30 seconds
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/published`, {
-      next: { revalidate: 30 }, // revalidate every 30s (ISR)
+    const res = await fetch(`${baseUrl}/api/blog/published`, {
+      next: { revalidate: 30 },
     });
 
     if (!res.ok) throw new Error("Failed to fetch blog posts");
 
     const data = await res.json();
     return data.posts || [];
-  } catch (err) {
-    console.error("Blog fetch error:", err);
+  } catch (error) {
+    console.error("Error fetching blog posts:", error);
     return [];
   }
 }
