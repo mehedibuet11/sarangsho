@@ -1,6 +1,6 @@
 "use client";
 
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -81,6 +81,10 @@ const handleLogout = async () => {
   localStorage.removeItem("admin_token");
   router.push("/admin");
 };
+
+useEffect(()=>{
+  fetchDashboardData()
+},[])
 
   const dashboardStats = [
     {
