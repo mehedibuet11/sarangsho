@@ -21,8 +21,13 @@ export async function middleware(req: NextRequest) {
   let isTokenValid = false;
   if (token) {
     try {
-      await jwtVerify(token, SECRET_KEY);
-      isTokenValid = true;
+      const data:any = await jwtVerify(token, SECRET_KEY);
+      if (data.email) {
+        isTokenValid = true;
+      } else {
+        isTokenValid = false;
+      }
+
     } catch (err) {
       isTokenValid = false;
     }
