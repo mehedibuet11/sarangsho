@@ -35,7 +35,7 @@ export function HeroSection() {
                 <span className="bg-gradient-to-r from-[#c25137] to-[#f77c6c] bg-clip-text text-transparent">
                   {settings.siteName || "Sarangsho"}
                 </span>
-                <span className="font-serif text-lg  text-gray-700">
+                <span className="font-serif text-2xl  text-gray-700">
                   (Beta)
                 </span>
               </h1>
