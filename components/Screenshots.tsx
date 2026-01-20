@@ -24,7 +24,7 @@ export default function AppScreenshots() {
       stopOnInteraction: false,
       stopOnMouseEnter: false,
     },
-    (emblaRoot) => emblaRoot.parentElement
+    (emblaRoot) => emblaRoot.parentElement,
   );
 
   const options: EmblaOptionsType = {
@@ -70,10 +70,8 @@ export default function AppScreenshots() {
     if (emblaApi) emblaApi.reInit();
   }, [screenshots, emblaApi]);
 
-  if (loading)
-    return <p className="text-center py-10">Loading screenshots...</p>;
-  if (!screenshots.length)
-    return <p className="text-center py-10">No screenshots found.</p>;
+  if (loading) return <p className="text-center py-10"></p>;
+  if (!screenshots.length) return <p className="text-center py-10"></p>;
 
   return (
     <section

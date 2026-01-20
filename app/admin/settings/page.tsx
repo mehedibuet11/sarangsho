@@ -38,7 +38,7 @@ export default function SiteSettings() {
     appStoreLink: "",
     playStoreLink: "",
     footerDescription: "",
-    Copyright: "",
+    copyright: "",
     tagLine: "",
     download: "",
     rating: "",
@@ -148,7 +148,7 @@ export default function SiteSettings() {
   };
 
   const handleFaviconUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -202,7 +202,7 @@ export default function SiteSettings() {
     }
   };
   const handleHeroImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -511,11 +511,11 @@ export default function SiteSettings() {
                     <Input
                       type="text"
                       placeholder="© 2023 Your Company"
-                      value={settings.Copyright}
+                      value={settings.copyright}
                       onChange={(e) =>
                         setSettings((prev) => ({
                           ...prev,
-                          Copyright: e.target.value,
+                          copyright: e.target.value,
                         }))
                       }
                     />
