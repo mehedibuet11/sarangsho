@@ -52,6 +52,11 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
             export PATH="$PATH:$HOME/.nvm/versions/node/v22.14.0/bin"
+
             pnpm i --frozen-lockfile
 
             pm2 start pm2.config.js || pm2 reload pm2.config.js
+            pm2 save
+
+            crontab -l 2>/dev/null | grep -q pm2 || \
+            (crontab -l 2>/dev/null; echo '@reboot export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; pm2 resurrect') | crontab -
