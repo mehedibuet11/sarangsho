@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: "FFEDE3";
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -58,7 +58,12 @@
     --chart-5: 340 75% 55%;
   }
 }
-
+.text-foreground {
+  color: hsl(var(--foreground));
+}
+.hr-text-red {
+  color: "BC3C1F";
+}
 @layer base {
   * {
     @apply border-border;
@@ -179,4 +184,40 @@ html {
 .dot-animation::after {
   content: ".";
   animation: dots 1.2s steps(4, end) infinite;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  width: 100%;
+}
+
+/* Large screens (default desktop) */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 100%;
+    padding: 20px 16px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px 12px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: 12px 10px;
+  }
 }

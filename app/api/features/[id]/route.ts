@@ -2,10 +2,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import db from "@/lib/database"; // mysql2 promise pool
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const body = await request.json();
     const id = Number.parseInt(params.id);
@@ -49,10 +47,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const id = Number.parseInt(params.id);
 

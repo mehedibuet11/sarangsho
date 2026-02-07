@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 const inter = Inter({ subsets: ["latin"] });
 
 const Settings = async function () {
-  const host = headers().get("host");
+  const host = (await headers()).get("host");
 
   const isLocalhost =
     host?.startsWith("localhost") || host?.startsWith("127.0.0.1");

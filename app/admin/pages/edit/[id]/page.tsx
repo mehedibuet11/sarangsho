@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Save, Eye, ArrowLeft } from "lucide-react";
@@ -14,7 +14,8 @@ import { RichTextEditor } from "@/components/rich-text-editor";
 import { useToast } from "@/hooks/use-toast";
 import { createSlug, validateSlug } from "@/lib/utils/slug";
 
-export default function EditPage({ params }: { params: { id: string } }) {
+export default function EditPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);

@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
+import { Button } from "@/components/ui/button";
 import db, { initializeDatabase } from "@/lib/database";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 // Initialize database
 initializeDatabase();
@@ -23,11 +23,12 @@ const getCustomPage = async (slug: string) => {
   }
 };
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const params = await props.params;
   const page = await getCustomPage(params.slug);
 
   if (!page) {
@@ -42,11 +43,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function CustomPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default async function CustomPage(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const params = await props.params;
   console.log("Fetching page with slug:", params.slug);
   const page = await getCustomPage(params.slug);
   console.log("Page result:", page);

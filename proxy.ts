@@ -5,7 +5,7 @@ import { jwtVerify } from "jose";
 const LOGIN_PATH = "/admin"; // login page
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const url = req.nextUrl.clone();
   const token = req.cookies.get("admin_token")?.value;
 
