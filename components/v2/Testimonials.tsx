@@ -156,7 +156,7 @@
 // }
 "use client";
 
-import { Loader, Play, User2 } from "lucide-react";
+import { Loader } from "lucide-react";
 
 const testimonials = [
   {
@@ -164,6 +164,7 @@ const testimonials = [
     role: "Student",
     text:
       "Whether your site is packed with loads of media or a wide range of products, media or a wide range of products.",
+    image: "/v2/review/f1.png"
   },
   {
     name: "Sarah Smith",
@@ -171,21 +172,25 @@ const testimonials = [
     text:
       "Whether your site is packed with loads of media or a wide range of products, media or a wide range of products.",
     featured: true,
+      image: "/v2/review/f2.png"
   },
   {
     name: "Sarah Smith",
     role: "Pir Shaheb",
+      image: "/v2/review/f3.png",
     text:
       "Whether your site is packed with loads of media or a wide range of products.",
   },
   {
     name: "Sarah Smith",
     role: "Influencer",
+      image: "/v2/review/f2.png",
     text:
       "Whether your site is packed with loads of media or a wide range of products, media or a wide range of products.",
   },
   {
     name: "Sarah Smith",
+      image: "/v2/review/f1.png",
     role: "Entrepreneur",
     text:
       "Whether your site is packed with loads of media or a wide range of products, media or a wide range of products.",
@@ -193,6 +198,7 @@ const testimonials = [
   {
     name: "Sarah Smith",
     role: "BCS Cadre",
+      image: "/v2/review/f2.png",
     text:
       "Whether your site is packed with loads of media or a wide range of products.",
   },
@@ -272,12 +278,15 @@ function TestimonialCard({
   role,
   text,
   isCenter,
+  image
 }: {
   name: string;
   role: string;
   text: string;
-  isCenter: boolean;
-}) {
+    isCenter: boolean;
+  image: string
+  }) {
+
   return (
     <div
       style={{ minHeight: isCenter ? 250 : 160, width: 300, minWidth: 300 }}
@@ -287,14 +296,17 @@ function TestimonialCard({
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <User2 className="h-9 w-9 text-gray-400" />
+          {/* <User2 className="h-9 w-9 text-gray-400" /> */}
+          <div className="h-10 w-10 bg-gray-700 rounded-full">
+            <img src={image} alt={name} className="h-full w-full rounded-full" />
+          </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">{name}</p>
             <p className="text-xs text-gray-500">{role}</p>
           </div>
         </div>
         <span className="text-gray-400 text-sm">
-          <Play />
+         <img src="/v2/playwhite.png" className="w-[24px] h-[24px]" />
         </span>
       </div>
       <p className="text-sm leading-relaxed text-gray-600 flex-grow">{text}</p>

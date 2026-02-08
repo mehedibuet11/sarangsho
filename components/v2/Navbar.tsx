@@ -72,7 +72,7 @@ export default function Navbar() {
             </button>
 
             <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4">
-              <Play /> Download App
+              <img src="/v2/playcolor.png" className="w-[24px] h-[24px]" />  Download App
             </button>
           </div>
 
@@ -98,7 +98,7 @@ export default function Navbar() {
                   Request a feature <ArrowRight />
                 </button>
                 <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4 w-full">
-                  <Play /> Download App
+                  <img src="/v2/playcolor.png" className="w-[24px] h-[24px]" /> Download App
                 </button>
               </div>
             </div>

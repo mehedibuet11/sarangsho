@@ -2,17 +2,17 @@
 
 "use client";
 
-import { ArrowRight, Loader, Play } from "lucide-react";
+import { ArrowRight, Loader } from "lucide-react";
 import Image from "next/image";
 
 export default function HomePage() {
   const images = [
-    "/v2/man-1.jpg",
-    "/v2/man-2.jpg",
-    "/v2/man-1.jpg",
-    "/v2/man-2.jpg",
-    "/v2/man-1.jpg",
-    "/v2/man-2.jpg",
+    "/v2/about/r1.png",
+    "/v2/about/r2.png",
+    "/v2/about/r3.png",
+    "/v2/about/r4.png",
+    "/v2/about/r5.png",
+    "/v2/about/r6.png",
   ];
 
   return (
@@ -38,7 +38,7 @@ export default function HomePage() {
 
           <div className="md:mt-6 mt-8 flex md:flex-row flex-col gap-3 w-full">
             <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4 w-full md:w-auto border-red-300 bg-red-500 text-white">
-              <Play /> Download App 
+              <img src="/v2/playwhite.png" className="w-[24px] h-[24px]" />  Download App 
             </button>
             <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4 w-full md:w-auto border-orange-300">
               Request a feature <ArrowRight />

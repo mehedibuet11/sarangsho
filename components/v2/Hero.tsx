@@ -1,6 +1,6 @@
 "use client";
 import { useSettings } from "@/context/SettingsContext";
-import { ArrowRight, Download, Globe, Play, Star } from "lucide-react";
+import { ArrowRight, Download, Globe, Star } from "lucide-react";
 import Image from "next/image";
 import { ReactNode } from "react";
 
@@ -48,7 +48,7 @@ export default function Hero() {
              
 
                <button className="flex justify-center items-center gap-2 border rounded-full  h-[42px] px-4 w-full md:w-auto border-red-300  bg-red-500 text-white ">
-              <Play /> Download App 
+              <img src="/v2/playwhite.png" className="w-[24px] h-[24px]" />  Download App 
             </button>
               <button className="flex justify-center items-center gap-2 border rounded-full   h-[42px] px-4 w-full md:w-auto border-orange-300">
               Request a feature <ArrowRight />

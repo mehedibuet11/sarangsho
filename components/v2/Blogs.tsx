@@ -2,9 +2,9 @@ import { Loader } from "lucide-react";
 import Image from "next/image";
 
 const blogs = [
-  { title: "The Rise of Short News in Bangladesh", tag: "Insight", min: "6 mins", img: "/v2/man-1.jpg" },
-  { title: "How Sarangsho Simplifies Current Affairs for BCS Aspirants", tag: "Insight", min: "6 mins", img: "/v2/man-2.jpg" },
-  { title: "Tips for Staying Updated on Global News Quickly", tag: "Insight", min: "6 mins", img: "/v2/man-2.jpg" },
+  { title: "The Rise of Short News in Bangladesh", tag: "Insight", min: "6 mins", img: "/v2/blog/b1.png" },
+  { title: "How Sarangsho Simplifies Current Affairs for BCS Aspirants", tag: "Insight", min: "6 mins", img: "/v2/blog/b2.png" },
+  { title: "Tips for Staying Updated on Global News Quickly", tag: "Insight", min: "6 mins", img: "/v2/blog/b3.png" },
 ];
 
 export default function Blogs() {
