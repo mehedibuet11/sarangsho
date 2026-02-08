@@ -1,14 +1,45 @@
-import { ArrowRight, Play } from "lucide-react";
+"use client";
+import { ArrowRight, Menu, Play, X } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 const nav = ["Features", "Resources", "How It works", "Blog"];
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <header className="w-full h-[66px]">
-      <div className=" container h-full">
-        <div className="flex bg-white rounded-[32px] shadow-md px-6 items-center justify-between h-full  ">
-          <div className="flex items-center gap-3">
+    <header className="w-full bg-white shadow-md md:shadow-none md:bg-transparent h-[66px] z-50 relative">
+      <div className="container h-full">
+        <div
+          className="flex px-6 items-center justify-between h-full
+                     md:rounded-[32px] md:shadow-md"
+        >
+
+          {/* LEFT: Hamburger Menu (mobile) */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setOpen(!open)}
+              className="p-2 rounded-full hover:bg-gray-100"
+            >
+              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+
+          {/* CENTER LOGO */}
+          <div className="flex items-center">
             <Image
               src="/v2/logo.png"
               alt="Sarangsho"
@@ -19,7 +50,8 @@ export default function Navbar() {
             />
           </div>
 
-          <nav className="hidden items-center gap-7 md:flex">
+          {/* DESKTOP NAV */}
+          <nav className="hidden md:flex items-center gap-7">
             {nav.map((item) => (
               <a
                 key={item}
@@ -31,17 +63,44 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <div className="flex justify-center items-center gap-2">
-            <button className="flex justify-center items-center gap-2 border rounded-full   h-[42px] px-4">
+          {/* RIGHT ACTION BUTTONS (desktop) */}
+          <div className="hidden md:flex justify-center items-center gap-2">
+            <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4">
               Request a feature <ArrowRight />
             </button>
 
-               <button className="flex justify-center items-center gap-2 border rounded-full  h-[42px] px-4">
-              <Play /> Download App 
+            <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4">
+              <Play /> Download App
             </button>
           </div>
 
-     
+          {/* MOBILE DROPDOWN MENU */}
+          {open && (
+            <div
+              ref={menuRef}
+              className="absolute top-[66px] left-0 w-full bg-white shadow-lg rounded-b-2xl py-4 px-6 flex flex-col gap-4 md:hidden z-50"
+            >
+              {nav.map((item) => (
+                <a
+                  key={item}
+                  href="#"
+                  className="text-gray-700 font-medium text-base hover:text-gray-900"
+                  onClick={() => setOpen(false)}
+                >
+                  {item}
+                </a>
+              ))}
+
+              <div className="flex flex-col gap-3 mt-2">
+                <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4 w-full">
+                  Request a feature <ArrowRight />
+                </button>
+                <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4 w-full">
+                  <Play /> Download App
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

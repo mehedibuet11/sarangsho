@@ -1,48 +1,103 @@
+
+
+"use client";
+
+import { ArrowRight, Loader, Play } from "lucide-react";
 import Image from "next/image";
 
-export default function About() {
-  return (
-    <section className="w-full bg-white">
-      <div className="mx-auto max-w-6xl px-4 py-16">
-        <div className="grid gap-10 md:grid-cols-2 md:items-center">
-          <div>
-            <p className="text-sm font-semibold text-gray-600">ABOUT US</p>
-            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">Built to Simplify News</h2>
-            <p className="mt-4 text-base leading-relaxed text-gray-600">
-              Sarangsho was created with one goal to make news easier to consume in a fast-moving world.
-              We turn long articles into clear, 60-word summaries so you can stay informed without wasting time.
-              Our platform is built for speed, simplicity, and accuracy, helping you focus on what truly matters.
-              With effortless swiping and smart curation, staying updated has never been this easy.
-            </p>
+export default function HomePage() {
+  const images = [
+    "/v2/man-1.jpg",
+    "/v2/man-2.jpg",
+    "/v2/man-1.jpg",
+    "/v2/man-2.jpg",
+    "/v2/man-1.jpg",
+    "/v2/man-2.jpg",
+  ];
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              <a
-                href="#"
-                className="rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-brand-700"
-              >
-                Download App
-              </a>
-              <a
-                href="#"
-                className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-gray-900 ring-1 ring-black/10 hover:bg-gray-50"
-              >
-                Request a feature
-              </a>
+  return (
+    <main className="h-full bg-[#FFF6F2]">
+      <div className="container py-6 md:py-0 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        
+        {/* LEFT CONTENT */}
+        <section>
+          <div className="flex items-center justify-start gap-2 text-red-400 mb-4">
+            <Loader className="h-5 w-5 animate-spin" />
+            <p className="font-semibold text-sm uppercase">About Us</p>
+          </div>
+
+          <h1 className="mt-4 text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+            Built to Simplify News
+          </h1>
+
+          <p className="mt-6 text-gray-600 max-w-lg">
+            Sarangsha was created with one goal — to make news easier to
+            consume in a fast-moving world. We turn long articles into clear,
+            60-word summaries so you can stay informed without wasting time.
+          </p>
+
+          <div className="md:mt-6 mt-8 flex md:flex-row flex-col gap-3 w-full">
+            <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4 w-full md:w-auto border-red-300 bg-red-500 text-white">
+              <Play /> Download App 
+            </button>
+            <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4 w-full md:w-auto border-orange-300">
+              Request a feature <ArrowRight />
+            </button>
+          </div>
+        </section>
+
+        {/* RIGHT IMAGE GALLERY */}
+        <section className="relative">
+          {/* DESKTOP 2-column grid */}
+          <div className="hidden md:grid grid-cols-2 gap-4">
+            {/* TOP STACK */}
+            <div className="flex flex-col gap-4">
+              {images.slice(0, 3).map((src, i) => (
+                <div key={i} className="relative h-56 rounded-2xl overflow-hidden">
+                  <Image src={src} alt={`Gallery image ${i + 1}`} fill className="object-cover" />
+                </div>
+              ))}
+            </div>
+
+            {/* BOTTOM STACK */}
+            <div className="flex flex-col gap-4 mt-16">
+              {images.slice(3).map((src, i) => (
+                <div key={i} className="relative h-56 rounded-2xl overflow-hidden">
+                  <Image src={src} alt={`Gallery image ${i + 4}`} fill className="object-cover" />
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* collage */}
-          <div className="grid grid-cols-2 gap-4">
-            {["/v2/banner.png", "/v2/banner.png", "/v2/banner.png", "/v2/banner.png"].map(
-              (src) => (
-                <div key={src} className="overflow-hidden rounded-xl2 shadow-soft ring-1 ring-black/5">
-                  <Image src={src} alt="Team" width={520} height={520} className="h-44 w-full object-cover md:h-48" />
+          {/* MOBILE: horizontal marquee */}
+          <div className="md:hidden overflow-hidden relative">
+            <div className="flex animate-marquee gap-4">
+              {[...images, ...images].map((src, i) => (
+                <div key={i} className="flex-shrink-0 w-48 h-56 rounded-2xl overflow-hidden relative">
+                  <Image src={src} alt={`Gallery image ${i + 1}`} fill className="object-cover" />
                 </div>
-              )
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
       </div>
-    </section>
+
+      {/* MARQUEE ANIMATION */}
+      <style jsx>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-marquee {
+          display: flex;
+          gap: 1rem;
+          animation: marquee 20s linear infinite;
+        }
+      `}</style>
+    </main>
   );
 }
