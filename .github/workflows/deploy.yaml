@@ -2,7 +2,7 @@ name: Client CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - landing
 
 jobs:
   build-and-deploy:
