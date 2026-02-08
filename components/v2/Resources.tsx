@@ -12,7 +12,7 @@ const buildRow = () =>
 
 export default function Resources() {
   return (
-    <section className="relative w-full bg-white overflow-hidden">
+    <section id="Resources" className="relative w-full bg-white overflow-hidden">
 
       {/* HEADER CONTAINER */}
       <div className="mx-auto container py-14">

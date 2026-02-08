@@ -2,7 +2,7 @@ import { Facebook, Instagram, Linkedin, Loader, Twitter } from "lucide-react";
 
 export default function Contact() {
   return (
-    <section className="w-full bg-white">
+    <section id="How It works" className="w-full bg-white">
       <div className="mx-auto container py-8 md:py-16">
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div>

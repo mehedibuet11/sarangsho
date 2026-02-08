@@ -80,7 +80,7 @@ function Card({
 
 export default function Features() {
   return (
-    <section className="w-full bg-white">
+    <section id="Features" className="w-full bg-white">
       <div className="container mx-auto py-16 px-4">
 
         {/* Header */}

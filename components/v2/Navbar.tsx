@@ -1,11 +1,13 @@
 "use client";
 import { ArrowRight, Menu, Play, X } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const nav = ["Features", "Resources", "How It works", "Blog"];
 
 export default function Navbar() {
+  const router = useRouter()
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -21,11 +23,11 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="w-full bg-white shadow-md md:shadow-none md:bg-transparent h-[66px] z-50 relative">
-      <div className="container h-full">
+    <header className="w-full sticky top-0 z-50 bg-white md:bg-transparent shadow-md md:shadow-none h-[66px] backdrop-blur-md">
+      <div className="container h-full ">
         <div
           className="flex px-6 items-center justify-between h-full
-                     md:rounded-[32px] md:shadow-md"
+                     md:rounded-[32px] md:shadow-md bg-white"
         >
 
           {/* LEFT: Hamburger Menu (mobile) */}
@@ -39,7 +41,7 @@ export default function Navbar() {
           </div>
 
           {/* CENTER LOGO */}
-          <div className="flex items-center">
+          <div onClick={() => router.push("/")} className="flex items-center cursor-pointer">
             <Image
               src="/v2/logo.png"
               alt="Sarangsho"
@@ -55,7 +57,7 @@ export default function Navbar() {
             {nav.map((item) => (
               <a
                 key={item}
-                href="#"
+                href={`#${item}`}
                 className="text-sm font-medium text-gray-700 hover:text-gray-900"
               >
                 {item}
@@ -83,7 +85,7 @@ export default function Navbar() {
               {nav.map((item) => (
                 <a
                   key={item}
-                  href="#"
+                  href={`#${item}`}
                   className="text-gray-700 font-medium text-base hover:text-gray-900"
                   onClick={() => setOpen(false)}
                 >
