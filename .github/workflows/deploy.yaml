@@ -1,32 +1,31 @@
-name: Transcriptor-admin  CI/CD Pipeline
+name: Client CI/CD Pipeline
 on:
   push:
     branches:
       - main
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: "22.14.0"
+
       - name: 🔨 Create .env file
         env:
           PROD_ENV: ${{ secrets.CLIENT_ENV }}
+        run: echo "$PROD_ENV" > .env
+
+      - name: Install dependencies & build
         run: |
-          echo "$PROD_ENV" > .env.local
-      # Step 3: Install dependencies for both frontend and backend
-      - name: Install dependencies
-        run: |
-          npm i  -g pnpm 
-          pnpm i 
+          npm i -g pnpm
+          pnpm i
           pnpm build
 
       - name: Copy files to server
@@ -37,5 +36,27 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           overwrite: true
-          source: .next,public,.gitignore,components.json,eslint.config.mjs,next.config.ts,package.json,pnpm-lock.yaml,pm2.config.js,.env,postcss.config.mjs,tailwind.config.ts,tsconfig.json,README.md, prisma/**
-          target: "/home/mehedi/public_html"
+          source: .next/standalone,.next/static,public,.env,pm2.config.js
+          target: "/home/sarangsho/htdocs/sarangsho.com"
+
+      - name: Install deps & reload on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd /home/sarangsho/htdocs/sarangsho.com
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+            export PATH="$PATH:$HOME/.nvm/versions/node/v22.14.0/bin"
+            npm i -g pm2
+            cp -r .next/static .next/standalone/.next/
+            cp -r public .next/standalone/
+            pm2 delete "Sarangsho" || true
+            pm2 start pm2.config.js
+            pm2 save
+
+            crontab -l 2>/dev/null | grep -q pm2 || \
+            (crontab -l 2>/dev/null; echo '@reboot export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; pm2 resurrect') | crontab -

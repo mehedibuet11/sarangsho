@@ -1,10 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"; // mysql2 pool
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const id = Number.parseInt(params.id);
 
@@ -27,10 +25,8 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const id = Number.parseInt(params.id);
 
@@ -48,10 +44,8 @@ export async function DELETE(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const body = await request.json();
     const { title, slug, content, status, seoTitle, seoDescription } = body;

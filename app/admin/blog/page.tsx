@@ -45,12 +45,6 @@ export default function BlogManagement() {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem("admin_token")
-    if (!token) {
-      router.push("/admin")
-      return
-    }
-
     fetchPosts()
   }, [router])
 

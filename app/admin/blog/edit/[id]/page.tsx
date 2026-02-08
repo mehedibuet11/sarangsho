@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Save, Eye, Upload, X, ArrowLeft } from "lucide-react";
@@ -21,7 +21,8 @@ import { RichTextEditor } from "@/components/rich-text-editor";
 import { createSlug, validateSlug } from "@/lib/utils/slug";
 import { useToast } from "@/hooks/use-toast";
 
-export default function EditBlogPost({ params }: { params: { id: string } }) {
+export default function EditBlogPost(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);

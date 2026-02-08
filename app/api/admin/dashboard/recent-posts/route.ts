@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import db, { initializeDatabase } from "@/lib/database";
-
-// Initialize database on first import
-initializeDatabase();
+import db from "@/lib/database";
+export const dynamic = "force-dynamic"; 
 
 export async function GET() {
   try {

@@ -8,7 +8,7 @@ import { useSettings } from "@/context/SettingsContext";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const settings = useSettings();
+  const settings: any = useSettings();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
@@ -16,9 +16,9 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            {settings.logo ? (
+            {settings?.logo ? (
               <img
-                src={settings.logo || "/logo.svg"}
+                src={settings?.logo || "/logo.svg"}
                 alt="Sarangsho Logo"
                 className="w-auto h-12 rounded-lg"
               />
@@ -64,33 +64,38 @@ export function Navbar() {
 
           {/* Download Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <a
-              href={settings.playStoreLink || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center space-x-2 bg-transparent"
+            {settings.appStoreLink && (
+              <a
+                href={settings.appStoreLink}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <Download className="w-4 h-4" />
-                <span>App Store</span>
-              </Button>
-            </a>
-            <a
-              href={settings.playStoreLink || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                size="sm"
-                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-2 bg-transparent"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>App Store</span>
+                </Button>
+              </a>
+            )}
+
+            {settings.playStoreLink && (
+              <a
+                href={settings.playStoreLink}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <Download className="w-4 h-4" />
-                <span>Play Store</span>
-              </Button>
-            </a>
+                <Button
+                  size="sm"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Play Store</span>
+                </Button>
+              </a>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -132,33 +137,38 @@ export function Navbar() {
                 Contact
               </Link>
               <div className="flex flex-col space-y-2 pt-4">
-                <a
-                  href={settings.appStoreLink || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center justify-center space-x-2 bg-transparent"
+                {settings.appStoreLink && (
+                  <a
+                    href={settings.appStoreLink || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>App Store</span>
-                  </Button>
-                </a>
-                <a
-                  href={settings.playStoreLink || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button
-                    size="sm"
-                    className="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600"
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center justify-center space-x-2 bg-transparent"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>App Store</span>
+                    </Button>
+                  </a>
+                )}
+
+                {settings.playStoreLink && (
+                  <a
+                    href={settings.playStoreLink || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Play Store</span>
-                  </Button>
-                </a>
+                    <Button
+                      size="sm"
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Play Store</span>
+                    </Button>
+                  </a>
+                )}
               </div>
             </div>
           </div>

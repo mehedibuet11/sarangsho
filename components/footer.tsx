@@ -11,9 +11,40 @@ import {
   MapPin,
 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+interface Page {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export function Footer() {
   const settings = useSettings();
+  const [pages, setPages] = useState<Page[]>([]);
+
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const response = await fetch("/api/pages");
+        const data = await response.json();
+        // Filter only published pages
+        const publishedPages = (data.pages || []).filter(
+          (page: Page) => page.status === "published",
+        );
+        setPages(publishedPages);
+      } catch (error) {
+        console.error("Failed to fetch pages:", error);
+      }
+    };
+
+    fetchPages();
+  }, []);
 
   return (
     <footer id="contact" className="bg-gray-900 text-white">
@@ -23,10 +54,12 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               {settings.logo ? (
-                <img
-                  src={settings.logo || "/logo.svg"}
+                <Image
+                  src={settings.logo}
                   alt="Sarangsho Logo"
-                  className="w-20 h-20 rounded-lg"
+                  width={192} // Corresponds to w-48
+                  height={80} // Corresponds to h-20
+                  className="rounded-lg object-contain" // Added object-contain for better scaling
                 />
               ) : (
                 <>
@@ -128,40 +161,29 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+            <h3 className="text-lg font-semibold mb-4">Pages</h3>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/privacy-policy"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terms-and-conditions"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Terms and Conditions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/disclaimer"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Disclaimer
-                </Link>
-              </li>
+              {pages.length > 0 ? (
+                pages.map((page) => (
+                  <li key={page.id}>
+                    <Link
+                      href={`/${page.slug}`}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      {page.title}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <Link
+                    href="/privacy-policy"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -169,31 +191,39 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-3">
-              <li className="flex items-center space-x-3">
-                <Mail className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400">
-                  {settings.contactEmail || ""}
-                </span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400">
-                  {settings.contactPhone || ""}
-                </span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <MapPin className="w-4 h-4 text-gray-400 mt-1" />
-                <span className="text-gray-400">
-                  {settings.contactAddress || ""}
-                </span>
-              </li>
+              {settings.contactEmail && (
+                <li className="flex items-center space-x-3">
+                  <Mail className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400">
+                    {settings.contactEmail || ""}
+                  </span>
+                </li>
+              )}
+
+              {settings.contactPhone && (
+                <li className="flex items-center space-x-3">
+                  <Phone className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400">
+                    {settings.contactPhone || ""}
+                  </span>
+                </li>
+              )}
+
+              {settings.contactAddress && (
+                <li className="flex items-start space-x-3">
+                  <MapPin className="w-4 h-4 text-gray-400 mt-1" />
+                  <span className="text-gray-400">
+                    {settings.contactAddress || ""}
+                  </span>
+                </li>
+              )}
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 md:justify-between items-center">
           <div className="w-full text-center ">
-            <p className="text-gray-400 text-sm">{settings.Copyright || ""}</p>
+            <p className="text-gray-400 text-sm">{settings.copyright || ""}</p>
           </div>
         </div>
       </div>

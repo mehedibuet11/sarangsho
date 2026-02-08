@@ -38,14 +38,23 @@ export default function SiteSettings() {
     appStoreLink: "",
     playStoreLink: "",
     footerDescription: "",
-    Copyright: "",
+    copyright: "",
     tagLine: "",
+    download: "",
+    rating: "",
+    newsSource: "",
+    heroLink: "",
   });
   const [logoPreview, setLogoPreview] = useState("");
   const [faviconPreview, setFaviconPreview] = useState("");
   const [heroImagePreview, setHeroImagePreview] = useState("");
   const [uploadStatus, setUploadStatus] = useState<
-    "idle" | "uploading_logo"|"uploading_favicon"| "uploading_hero" | "uploaded" | "error"
+    | "idle"
+    | "uploading_logo"
+    | "uploading_favicon"
+    | "uploading_hero"
+    | "uploaded"
+    | "error"
   >("idle");
 
   useEffect(() => {
@@ -139,7 +148,7 @@ export default function SiteSettings() {
   };
 
   const handleFaviconUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -193,7 +202,7 @@ export default function SiteSettings() {
     }
   };
   const handleHeroImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -248,7 +257,11 @@ export default function SiteSettings() {
   };
 
   const handleSave = async () => {
-    if (uploadStatus === "uploading_logo" || uploadStatus === "uploading_favicon" || uploadStatus === "uploading_hero") {
+    if (
+      uploadStatus === "uploading_logo" ||
+      uploadStatus === "uploading_favicon" ||
+      uploadStatus === "uploading_hero"
+    ) {
       toast({
         variant: "destructive",
         title: "Uploading in progress",
@@ -394,6 +407,71 @@ export default function SiteSettings() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Hero Video ID(Optional)
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="downloaded count"
+                      value={settings.heroLink}
+                      onChange={(e) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          heroLink: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Downloaded(count)
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="downloaded count"
+                      value={settings.download}
+                      onChange={(e) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          download: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rating(count)
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="rating count"
+                      value={settings.rating}
+                      onChange={(e) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          rating: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      NewsSource(count)
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="news source count"
+                      value={settings.newsSource}
+                      onChange={(e) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          newsSource: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       App Store Link
                     </label>
                     <Input
@@ -433,11 +511,11 @@ export default function SiteSettings() {
                     <Input
                       type="text"
                       placeholder="© 2023 Your Company"
-                      value={settings.Copyright}
+                      value={settings.copyright}
                       onChange={(e) =>
                         setSettings((prev) => ({
                           ...prev,
-                          Copyright: e.target.value,
+                          copyright: e.target.value,
                         }))
                       }
                     />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -23,7 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import Cookies from "js-cookie";
 interface DashboardStats {
   totalPosts: number;
   publishedPosts: number;
@@ -42,8 +42,6 @@ interface RecentPost {
 }
 
 export default function AdminDashboard() {
-  const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0,
     publishedPosts: 0,
@@ -55,15 +53,6 @@ export default function AdminDashboard() {
   const [recentPosts, setRecentPosts] = useState<RecentPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) {
-      router.push("/admin");
-    } else {
-      setIsAuthenticated(true);
-      fetchDashboardData();
-    }
-  }, [router]);
 
   const fetchDashboardData = async () => {
     try {
@@ -82,11 +71,20 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+const router = useRouter();
+ 
+const handleLogout = async () => {
+  
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_token");
-    router.push("/admin");
-  };
+  // Call backend to remove HTTP-only cookie
+  await fetch("/api/admin/logout", { method: "POST" });
+  localStorage.removeItem("admin_token");
+  router.push("/admin");
+};
+
+useEffect(()=>{
+  fetchDashboardData()
+},[])
 
   const dashboardStats = [
     {

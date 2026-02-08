@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs";
-import mysql, { RowDataPacket } from "mysql2/promise";
 
-// DB Config
+import mysql, { Pool, PoolConnection, RowDataPacket } from "mysql2/promise";
+import bcrypt from "bcryptjs";
+
 const dbConfig = {
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -12,16 +12,26 @@ const dbConfig = {
   timezone: "+00:00",
 };
 
-const pool = mysql.createPool({
-  ...dbConfig,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+let pool: Pool;
 
-export async function initializeDatabase() {
-  // Create connection without DB first, to create DB if missing
-  const initialConn = await mysql.createConnection({
+function createPool(): Pool {
+  if (!pool) {
+    pool = mysql.createPool({
+      ...dbConfig,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
+    console.log("✅ MySQL pool initialized");
+  }
+  return pool;
+}
+
+const db = createPool();
+
+// ✅ Initialize Database (create if not exists)
+export async function initializeDatabase(): Promise<void> {
+  const connection = await mysql.createConnection({
     host: dbConfig.host,
     user: dbConfig.user,
     password: dbConfig.password,
@@ -29,17 +39,17 @@ export async function initializeDatabase() {
   });
 
   try {
-    await initialConn.query(
+    await connection.query(
       `CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
     );
+    console.log("✅ Database ensured:", dbConfig.database);
   } finally {
-    await initialConn.end();
+    await connection.end();
   }
 
-  // Now get pool connection and create tables
-  const conn = await pool.getConnection();
+  const conn = await db.getConnection();
   try {
-    const tables = [
+    const tableQueries = [
       // blog_posts
       `CREATE TABLE IF NOT EXISTS blog_posts (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -124,27 +134,28 @@ export async function initializeDatabase() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
     ];
 
-    for (const sql of tables) {
+    for (const sql of tableQueries) {
       await conn.query(sql);
     }
 
     await seedInitialData(conn);
-  } catch (err) {
-    console.error("❌ DB init error:", err);
-    throw err;
+    console.log("✅ All tables ensured and seeded");
+  } catch (error) {
+    console.error("❌ Database initialization error:", error);
+    throw error;
   } finally {
     conn.release();
   }
 }
 
-async function seedInitialData(conn: mysql.PoolConnection) {
-  // Check admin user count
+// ✅ Seed Default Data
+async function seedInitialData(conn: PoolConnection) {
+  // Ensure admin user
   const [adminRows] = await conn.query<RowDataPacket[]>(
     "SELECT COUNT(*) AS count FROM admin_users WHERE username = ?",
     ["admin"]
   );
-  const adminCount = adminRows[0]?.count || 0;
-  if (!adminCount) {
+  if (!adminRows[0]?.count) {
     const hash = bcrypt.hashSync("admin123", 10);
     await conn.query(
       "INSERT INTO admin_users (username, password_hash, email) VALUES (?, ?, ?)",
@@ -152,7 +163,7 @@ async function seedInitialData(conn: mysql.PoolConnection) {
     );
   }
 
-  // Insert site settings with INSERT IGNORE
+  // Default site settings
   const settings: [string, string][] = [
     ["site_name", "Sarangsho"],
     ["site_description", "Swipe through the latest trusted news"],
@@ -164,11 +175,6 @@ async function seedInitialData(conn: mysql.PoolConnection) {
     ["contact_email", "hello@sarangsho.com"],
     ["contact_phone", "+1 (555) 123-4567"],
     ["contact_address", "123 News Street, Digital City, DC 12345"],
-    ["social_facebook", ""],
-    ["social_twitter", ""],
-    ["social_instagram", ""],
-    ["social_linkedin", ""],
-    ["google_analytics", ""],
     ["meta_keywords", "news, journalism, mobile news, trusted sources"],
   ];
 
@@ -179,44 +185,17 @@ async function seedInitialData(conn: mysql.PoolConnection) {
     );
   }
 
-  // App features count
+  // Default features
   const [featureRows] = await conn.query<RowDataPacket[]>(
     "SELECT COUNT(*) AS count FROM app_features"
   );
-  const featureCount = featureRows[0]?.count || 0;
-
-  if (!featureCount) {
+  if (!featureRows[0]?.count) {
     const features = [
-      [
-        "Swipe to Explore",
-        "Navigate news with TikTok-style swiping.",
-        "Smartphone",
-        "from-blue-500 to-cyan-500",
-        1,
-      ],
-      [
-        "Discover by Category",
-        "Browse news by topics.",
-        "Search",
-        "from-purple-500 to-pink-500",
-        2,
-      ],
-      [
-        "Global News Search",
-        "Find news from anywhere.",
-        "Zap",
-        "from-green-500 to-teal-500",
-        3,
-      ],
-      [
-        "Trusted Sources Only",
-        "Only verified news.",
-        "Shield",
-        "from-orange-500 to-red-500",
-        4,
-      ],
+      ["Swipe to Explore", "Navigate news with TikTok-style swiping.", "Smartphone", "from-blue-500 to-cyan-500", 1],
+      ["Discover by Category", "Browse news by topics.", "Search", "from-purple-500 to-pink-500", 2],
+      ["Global News Search", "Find news from anywhere.", "Zap", "from-green-500 to-teal-500", 3],
+      ["Trusted Sources Only", "Only verified news.", "Shield", "from-orange-500 to-red-500", 4],
     ];
-
     for (const [title, description, icon, gradient, sort_order] of features) {
       await conn.query(
         "INSERT INTO app_features (title, description, icon, gradient, sort_order) VALUES (?, ?, ?, ?, ?)",
@@ -224,87 +203,49 @@ async function seedInitialData(conn: mysql.PoolConnection) {
       );
     }
   }
-
-  // Screenshots count
-  const [screenshotRows] = await conn.query<RowDataPacket[]>(
-    "SELECT COUNT(*) AS count FROM screenshots"
-  );
-  const screenshotCount = screenshotRows[0]?.count || 0;
-
-  if (!screenshotCount) {
-    const screenshots = [
-      [
-        "Home Feed",
-        "Swipe through curated news",
-        "/placeholder.svg?height=600&width=300",
-        1,
-      ],
-      [
-        "Categories",
-        "Browse news by topic",
-        "/placeholder.svg?height=600&width=300",
-        2,
-      ],
-      [
-        "Search",
-        "Find specific news",
-        "/placeholder.svg?height=600&width=300",
-        3,
-      ],
-      [
-        "Article View",
-        "Read full articles",
-        "/placeholder.svg?height=600&width=300",
-        4,
-      ],
-      [
-        "Bookmarks",
-        "Save articles",
-        "/placeholder.svg?height=600&width=300",
-        5,
-      ],
-    ];
-
-    for (const [title, description, image_url, sort_order] of screenshots) {
-      await conn.query(
-        "INSERT INTO screenshots (title, description, image_url, sort_order) VALUES (?, ?, ?, ?)",
-        [title, description, image_url, sort_order]
-      );
-    }
-  }
 }
 
-export async function executeQuery(query: string, params: any[] = []) {
-  const conn = await pool.getConnection();
+// ✅ Helper Query Functions
+export async function executeQuery<T = any>(
+  query: string,
+  params: any[] = []
+): Promise<T> {
+  const conn = await db.getConnection();
   try {
     const [results] = await conn.query(query, params);
-    return results;
+    return results as T;
   } finally {
     conn.release();
   }
 }
 
-export async function executeTransaction(
+export async function executeTransaction<T = any>(
   queries: { query: string; params?: any[] }[]
-) {
-  const conn = await pool.getConnection();
+): Promise<T[]> {
+  const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
-    const results = [];
-    for (const q of queries)
-      results.push((await conn.query(q.query, q.params || []))[0]);
+    const results: T[] = [];
+    for (const q of queries) {
+      const [result] = await conn.query(q.query, q.params || []);
+      results.push(result as T);
+    }
     await conn.commit();
     return results;
-  } catch (err) {
+  } catch (error) {
     await conn.rollback();
-    throw err;
+    throw error;
   } finally {
     conn.release();
   }
 }
 
+// ✅ Close pool gracefully
 export async function closeDatabase() {
-  await pool.end();
+  if (pool) {
+    await pool.end();
+    console.log("🔒 Database pool closed");
+  }
 }
 
-export default pool;
+export default db;
