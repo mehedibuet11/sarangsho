@@ -33,7 +33,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
-          port: 2222
+          port: 22
           overwrite: true
           source: .next/standalone,.next/static,public,.env,pm2.config.js
           target: "/home/sarangsho/htdocs/sarangsho.com"
@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
-          port: 2222
+          port: 22
           script: |
             cd /home/sarangsho/htdocs/sarangsho.com
             export NVM_DIR="$HOME/.nvm"
