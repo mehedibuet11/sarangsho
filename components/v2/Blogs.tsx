@@ -12,7 +12,7 @@ export default function Blogs() {
     <section id="Blog" className="w-full bg-white">
       <div className="container py-12">
            <div className="flex items-center justify-center gap-2 text-red-400 mb-4">
-          <Loader className="h-5 w-5 animate-spin" />
+          <Loader className="h-5 w-5 " />
           <p className="font-semibold text-sm">BLOG</p>
         </div>
 

@@ -5,7 +5,7 @@
 import { ArrowRight, Loader } from "lucide-react";
 import Image from "next/image";
 
-export default function HomePage() {
+export default function About() {
   const images = [
     "/v2/about/r1.png",
     "/v2/about/r2.png",
@@ -22,7 +22,7 @@ export default function HomePage() {
         {/* LEFT CONTENT */}
         <section>
           <div className="flex items-center justify-start gap-2 text-red-400 mb-4">
-            <Loader className="h-5 w-5 animate-spin" />
+            <Loader className="h-5 w-5 " />
             <p className="font-semibold text-sm uppercase">About Us</p>
           </div>
 

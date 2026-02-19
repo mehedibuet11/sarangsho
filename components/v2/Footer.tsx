@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <Image src="/v2/footerlogo.png" alt="Sarangsho" width={190} height={80} className="h-20 w-auto invert" />
+            <Image src="/v2/footerlogo.png" alt="Sarangsho" width={190} height={80} className="h-20 w-auto  object-contain" />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
               Stay informed in seconds with Sarangsho — smart short-news from trusted sources.
             </p>

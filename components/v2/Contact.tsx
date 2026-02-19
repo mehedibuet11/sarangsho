@@ -7,7 +7,7 @@ export default function Contact() {
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div>
              <div className="flex items-center justify-start gap-2 text-red-400 mb-4">
-          <Loader className="h-5 w-5 animate-spin" />
+          <Loader className="h-5 w-5 " />
           <p className="font-semibold text-sm">CONTACT</p>
         </div>
             <h2 className="mt-2 text-4xl font-extrabold text-gray-900">Get It Touch</h2>

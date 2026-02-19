@@ -25,12 +25,12 @@ export default function Hero() {
    const settings = useSettings();
   return (
     <section className="w-full">
-      <div className="mx-auto container px-4 pt-8">
-        <div className="grid items-center md:grid-cols-2 ">
+      <div className="mx-auto container px-4 pt-8 md:pt-[60px] ">
+        <div className="grid items-start md:grid-cols-2 ">
           {/* Left */}
           <div>
-                        <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                <span className="bg-gradient-to-r from-[#c25137] to-[#f77c6c] bg-clip-text text-transparent">
+                        <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight">
+                <span className="bg-gradient-to-r from-[#BC3C1F] to-[#FD2F00] bg-clip-text text-transparent">
                   {settings?.siteName || "Sarangsho"}
                 </span>
                 <span className="font-serif text-2xl  text-gray-700">
@@ -44,31 +44,37 @@ export default function Hero() {
 
            
 
-            <div className="md:mt-6 mt-8 flex md:flex-row flex-col gap-3 w-full">
+            <div className="md:mt-9 mt-8 flex md:flex-row flex-col gap-3 w-full">
              
 
                <button className="flex justify-center items-center gap-2 border rounded-full  h-[42px] px-4 w-full md:w-auto border-red-300  bg-red-500 text-white ">
               <img src="/v2/playwhite.png" className="w-[24px] h-[24px]" />  Download App 
             </button>
+   
+
+
+
+
+
               <button className="flex justify-center items-center gap-2 border rounded-full   h-[42px] px-4 w-full md:w-auto border-orange-300">
               Request a feature <ArrowRight />
             </button>
             </div>
 
-            <div className="pt-10 md:pt-20 flex flex-wrap gap-4">
-              <Stat icon={<Download className="h-5 w-5 text-gray-900" />} value="22k+" label="Downloads" />
-              <Stat icon={<Star className="h-5 w-5 text-gray-900" />} value="4.6" label="Rating" />
+            <div className="pt-10 md:pt-36 flex flex-wrap gap-4">
+              <Stat icon={<Download className="h-5 w-5 text-gray-900" />} value="32k+" label="Downloads" />
+              <Stat icon={<Star className="h-5 w-5 text-gray-900" />} value="4.5" label="Rating" />
               <Stat icon={<Globe className="h-5 w-5 text-gray-900" />} value="2000+" label="News Sources" />
             </div>
           </div>
 
           {/* Right */}
-          <div className="relative md:pt-0 pt-6">
+          <div className="relative md:pt-0 pt-6 max-h-[620px] overflow-hidden">
            <Image
-                    src="/v2/banner1.png"
+                    src="/v2/banner.png"
                     alt="App Preview"
                     width={520}
-                    height={680}
+                    height={580}
                     className="h-auto w-full"
                     priority
                   />

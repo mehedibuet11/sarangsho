@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRight, Menu, Play, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -23,22 +23,14 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="w-full sticky top-0 z-50 bg-white md:bg-transparent shadow-md md:shadow-none h-[66px] backdrop-blur-md">
+    <header className="w-full sticky top-0 z-50 bg-white md:bg-transparent shadow-sm md:shadow-none md:h-[66px] h-[64px] backdrop-blur-md pt-[12px]">
       <div className="container h-full ">
         <div
           className="flex px-6 items-center justify-between h-full
                      md:rounded-[32px] md:shadow-md bg-white"
         >
 
-          {/* LEFT: Hamburger Menu (mobile) */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setOpen(!open)}
-              className="p-2 rounded-full hover:bg-gray-100"
-            >
-              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
+       
 
           {/* CENTER LOGO */}
           <div onClick={() => router.push("/")} className="flex items-center cursor-pointer">
@@ -73,6 +65,15 @@ export default function Navbar() {
 
             <button className="flex justify-center items-center gap-2 border rounded-full h-[42px] px-4">
               <img src="/v2/playcolor.png" className="w-[24px] h-[24px]" />  Download App
+            </button>
+          </div>
+             {/* LEFT: Hamburger Menu (mobile) */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setOpen(!open)}
+              className="p-2 rounded-full hover:bg-gray-100"
+            >
+              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
 
