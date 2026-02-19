@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-const newsList = ["/v2/news/news2.png", "/v2/news/news3.png", "/v2/news/news3.png"]; // ✅ 3 slides
+const newsList = ["/v2/news/news2.png", "/v2/news/news3.png", "/v2/news/news1.png"]; // ✅ 3 slides
 
 export default function WhyChoose() {
   const slides = useMemo(() => newsList, []);
