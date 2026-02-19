@@ -1,62 +1,146 @@
+# name: Client CI/CD Pipeline
+# on:
+#   push:
+#     branches:
+#       - main
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: "22.14.0"
+
+#       - name: 🔨 Create .env file
+#         env:
+#           PROD_ENV: ${{ secrets.CLIENT_ENV }}
+#         run: echo "$PROD_ENV" > .env
+
+#       - name: Install dependencies & build
+#         run: |
+#           npm i -g pnpm
+#           pnpm install --no-frozen-lockfile
+#           pnpm build
+
+#       - name: Copy files to server
+#         uses: appleboy/scp-action@v0.1.4
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username: ${{ secrets.USER }}
+#           password: ${{ secrets.PASSWORD }}
+#           port: 22
+#           overwrite: true
+#           source: .next/standalone,.next/static,public,.env,pm2.config.js
+#           target: "/home/sarangsho/htdocs/sarangsho.com"
+
+#       - name: Install deps & reload on server
+#         uses: appleboy/ssh-action@v1.0.3
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username: ${{ secrets.USER }}
+#           password: ${{ secrets.PASSWORD }}
+#           port: 22
+#           script: |
+#             cd /home/sarangsho/htdocs/sarangsho.com
+#             export NVM_DIR="$HOME/.nvm"
+#             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+#             export PATH="$PATH:$HOME/.nvm/versions/node/v22.14.0/bin"
+#             npm i -g pm2
+#             cp -r .next/static .next/standalone/.next/
+#             cp -r public .next/standalone/
+#             pm2 delete "Sarangsho" || true
+#             pm2 start pm2.config.js
+#             pm2 save
+
+#             crontab -l 2>/dev/null | grep -q pm2 || \
+#             (crontab -l 2>/dev/null; echo '@reboot export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; pm2 resurrect') | crontab -
+
 name: Client CI/CD Pipeline
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: "22.14.0"
+          cache: "pnpm"
+
+      - name: Install pnpm
+        run: npm i -g pnpm
 
       - name: 🔨 Create .env file
         env:
           PROD_ENV: ${{ secrets.CLIENT_ENV }}
-        run: echo "$PROD_ENV" > .env
+        run: |
+          echo "$PROD_ENV" > .env
 
       - name: Install dependencies & build
         run: |
-          npm i -g pnpm
           pnpm install --no-frozen-lockfile
           pnpm build
 
+      # ✅ Copy build artifacts to server (SSH key)
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           overwrite: true
-          source: .next/standalone,.next/static,public,.env,pm2.config.js
+          source: ".next/standalone/**,.next/static/**,public/**,.env,pm2.config.js"
           target: "/home/sarangsho/htdocs/sarangsho.com"
+          timeout: 120s
+          debug: true
 
+      # ✅ Install deps & reload on server (SSH key)
       - name: Install deps & reload on server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            set -e
             cd /home/sarangsho/htdocs/sarangsho.com
+
             export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-            export PATH="$PATH:$HOME/.nvm/versions/node/v22.14.0/bin"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+
+            nvm use 22 || nvm install 22
+
             npm i -g pm2
+
+            # Next.js standalone needs these files inside standalone folder
+            mkdir -p .next/standalone/.next
+            rm -rf .next/standalone/.next/static || true
             cp -r .next/static .next/standalone/.next/
+
+            rm -rf .next/standalone/public || true
             cp -r public .next/standalone/
+
             pm2 delete "Sarangsho" || true
             pm2 start pm2.config.js
             pm2 save
 
-            crontab -l 2>/dev/null | grep -q pm2 || \
+            crontab -l 2>/dev/null | grep -q "pm2 resurrect" || \
             (crontab -l 2>/dev/null; echo '@reboot export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; pm2 resurrect') | crontab -
